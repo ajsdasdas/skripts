@@ -1,0 +1,55 @@
+on right click on water cauldron:
+    if player has permission "cauldron.bypass":
+        stop
+    if player's tool is a shulker box:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a banner:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather helmet:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather chestplate:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather leggings:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather boots:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+
+on right click on cauldron:
+    if player has permission "cauldron.bypass":
+        stop
+    if player's tool is a shulker box:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a banner:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather helmet:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather chestplate:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather leggings:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop
+    if player's tool is a leather boots:
+        cancel event
+        send "&cYou cannot use that with a cauldron." to player
+        stop

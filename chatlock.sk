@@ -1,0 +1,36 @@
+options:
+    prefix: &8[&cLockerBlyat&8] &7
+
+# Block chat when locked
+on chat:
+    if {chat.locked} is true:
+        cancel event
+        send "{@prefix}&cChat is currently locked. Please wait." to player
+
+# Command to toggle chat
+command /chatlock:
+    permission: chatlock.use
+    permission message: &cYou do not have permission to use this command.
+    trigger:
+        if {chat.locked} is true:
+            delete {chat.locked}
+            broadcast "{@prefix}&aChat has been unlocked."
+        else:
+            set {chat.locked} to true
+            broadcast "{@prefix}&cChat has been locked."
+
+# Optional: Separate commands for better control
+
+command /lockchat:
+    permission: chatlock.use
+    trigger:
+        if {chat.locked} is not true:
+            set {chat.locked} to true
+            broadcast "{@prefix}&cChat has been locked."
+
+command /unlockchat:
+    permission: chatlock.use
+    trigger:
+        if {chat.locked} is true:
+            delete {chat.locked}
+            broadcast "{@prefix}&aChat has been unlocked."

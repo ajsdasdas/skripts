@@ -1,0 +1,15 @@
+every 0.1 seconds:
+    loop all players:
+        set {_world} to name of world of loop-player
+        if {_world} is "noelyarena" or "swordarena":
+            if loop-player is gliding:
+                set velocity of loop-player to vector(0, 0, 0)
+                send "&cElytra flying is disabled in this world." to loop-player
+
+on right click:
+    set {_world} to name of world of player
+    if {_world} is "noelyarena" or "swordarena":
+        if player is gliding:
+            if player's held item is a firework rocket:
+                cancel event
+                send "&cFirework boosting with Elytra is disabled in this world." to player

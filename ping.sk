@@ -1,0 +1,30 @@
+# ──────────────────────────────────────────
+#  /ping  –  Shows your current connection speed
+#  Requires: Skript 2.6+ + skript-ping addon
+#  Compatible: Paper / Spigot 1.16+
+# ──────────────────────────────────────────
+
+command /ping [<player=%player%>]:
+    trigger:
+        # ── checking another player ──────────
+        if arg-1 is not player:
+            if player does not have permission "skript.ping.others":
+                send colored "&cYou don't have permission to check other players' ping." to player
+                stop
+
+        set {_target} to arg-1
+        set {_ping} to ping of {_target}
+
+        # ── colour based on latency ──────────
+        if {_ping} > 200:
+            set {_col} to "<##D60000>"
+        else if {_ping} > 150:
+            set {_col} to "<##FFE137>"
+        else:
+            set {_col} to "<##00FF30>"
+
+        # ── send the message ─────────────────
+        if {_target} is player:
+            send colored "&fʏᴏᴜʀ ᴄᴜʀʀᴇɴᴛ ᴄᴏɴɴᴇᴄᴛɪᴏɴ ꜱᴘᴇᴇᴅ ɪꜱ %{_col}%%{_ping}%&fᴍꜱ" to player
+        else:
+            send colored "&f%{_target}%'s ᴄᴏɴɴᴇᴄᴛɪᴏɴ ꜱᴘᴇᴇᴅ ɪꜱ %{_col}%%{_ping}%&fᴍꜱ" to player

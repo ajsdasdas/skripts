@@ -1,0 +1,202 @@
+# Named chest lootdrops
+
+options:
+    prefix: &b&lLootDrop &7>
+    eventprefix: §x§A§9§1§4§F§0§lE§x§9§C§1§4§D§3§lV§x§8§E§1§4§B§5§lE§x§8§1§1§5§9§8§lN§x§7§4§1§5§7§A§lT§x§6§6§1§5§5§D§lS &7|
+
+command /lootdrop [<text>] [<text>] [<text>]:
+    permission: op
+    trigger:
+        if arg-1 is not set:
+            send "{@prefix} &f/lootdrop wand"
+            send "{@prefix} &f/lootdrop create <name>"
+            send "{@prefix} &f/lootdrop delete <name>"
+            send "{@prefix} &f/lootdrop start <name>"
+            send "{@prefix} &f/lootdrop stop"
+            send "{@prefix} &f/lootdrop random <name> <true/false>"
+            send "{@prefix} &f/lootdrop list"
+            send "{@prefix} &f/lootdrop chests"
+            send "{@prefix} &f/lootdrop clearchests"
+            stop
+
+        if arg-1 is "wand":
+            give player a stick named "&b&lLootDrop Wand"
+            send "{@prefix} &fRight-click chests to add them, left-click to remove them." to player
+            stop
+
+        if arg-1 is "create":
+            if arg-2 is not set:
+                send "{@prefix} &cUsage: /lootdrop create <name>" to player
+                stop
+            set {_name} to lowercase arg-2
+            set {lootdrop.drops::%{_name}%::exists} to true
+            if {lootdrop.drops::%{_name}%::random} is not set:
+                set {lootdrop.drops::%{_name}%::random} to true
+            set {lootdrop.names::%{_name}%} to {_name}
+            set {lootdrop.editing::%uuid of player%} to {_name}
+            open chest inventory with 3 rows named "&8LootDrop: %{_name}%" to player
+            wait 1 tick
+            loop 27 times:
+                set {_slot} to loop-number - 1
+                if {lootdrop.drops::%{_name}%::items::%{_slot}%} is set:
+                    set slot {_slot} of player's current inventory to {lootdrop.drops::%{_name}%::items::%{_slot}%}
+            send "{@prefix} &fPut the loot items in this GUI, then close it to save." to player
+            stop
+
+        if arg-1 is "delete":
+            if arg-2 is not set:
+                send "{@prefix} &cUsage: /lootdrop delete <name>" to player
+                stop
+            set {_name} to lowercase arg-2
+            if {lootdrop.drops::%{_name}%::exists} is not set:
+                send "{@prefix} &cThat lootdrop does not exist." to player
+                stop
+            delete {lootdrop.drops::%{_name}%::*}
+            delete {lootdrop.names::%{_name}%}
+            if {lootdrop.active} is {_name}:
+                delete {lootdrop.active}
+            send "{@prefix} &cDeleted lootdrop &f%{_name}%&c." to player
+            stop
+
+        if arg-1 is "start":
+            if arg-2 is not set:
+                send "{@prefix} &cUsage: /lootdrop start <name>" to player
+                stop
+            set {_name} to lowercase arg-2
+            if {lootdrop.drops::%{_name}%::exists} is not set:
+                send "{@prefix} &cThat lootdrop does not exist." to player
+                stop
+            if {lootdrop.chests::*} is not set:
+                send "{@prefix} &cNo chests are registered. Use /lootdrop wand first." to player
+                stop
+            if {lootdrop.drops::%{_name}%::items::*} is not set:
+                send "{@prefix} &cThat lootdrop has no items. Use /lootdrop create %{_name}% to add items." to player
+                stop
+            set {lootdrop.active} to {_name}
+            send "{@prefix} &aStarted lootdrop &f%{_name}%&a." to player
+            broadcast "{@eventprefix} &fLootdrop &b%{_name}% &fhas started!"
+            stop
+
+        if arg-1 is "stop":
+            if {lootdrop.active} is not set:
+                send "{@prefix} &cNo lootdrop is currently active." to player
+                stop
+            delete {lootdrop.active}
+            loop {lootdrop.chests::*}:
+                clear inventory of block at loop-value
+            send "{@prefix} &cStopped the active lootdrop and cleared registered chests." to player
+            broadcast "{@eventprefix} &cThe lootdrop has ended!"
+            stop
+
+        if arg-1 is "random":
+            if arg-2 is not set:
+                send "{@prefix} &cUsage: /lootdrop random <name> <true/false>" to player
+                stop
+            if arg-3 is not "true":
+                if arg-3 is not "false":
+                    send "{@prefix} &cUsage: /lootdrop random <name> <true/false>" to player
+                    stop
+            set {_name} to lowercase arg-2
+            if {lootdrop.drops::%{_name}%::exists} is not set:
+                send "{@prefix} &cThat lootdrop does not exist." to player
+                stop
+            if arg-3 is "true":
+                set {lootdrop.drops::%{_name}%::random} to true
+                send "{@prefix} &fLootdrop &b%{_name}% &fwill use &arandom &fitem positions." to player
+            else:
+                set {lootdrop.drops::%{_name}%::random} to false
+                send "{@prefix} &fLootdrop &b%{_name}% &fwill use the &aoriginal &fGUI positions." to player
+            stop
+
+        if arg-1 is "list":
+            if {lootdrop.names::*} is not set:
+                send "{@prefix} &cNo lootdrops created yet." to player
+                stop
+            send "&b&lLootDrops:" to player
+            loop {lootdrop.names::*}:
+                set {_name} to loop-value
+                send "&7- &f%{_name}% &7(random: &f%{lootdrop.drops::%{_name}%::random}%&7)" to player
+            stop
+
+        if arg-1 is "chests":
+            if {lootdrop.chests::*} is not set:
+                send "{@prefix} &cNo chests registered yet." to player
+                stop
+            send "&b&lRegistered Chests:" to player
+            loop {lootdrop.chests::*}:
+                send "&7- &f%loop-value%" to player
+            stop
+
+        if arg-1 is "clearchests":
+            clear {lootdrop.chests::*}
+            send "{@prefix} &cAll registered chests have been cleared." to player
+            stop
+
+        send "{@prefix} &cUnknown subcommand. Use /lootdrop for help." to player
+
+on right click:
+    if player's held item is a stick named "&b&lLootDrop Wand":
+        if clicked block is set:
+            if clicked block is a chest:
+                cancel event
+                set {_loc} to location of clicked block
+                if {lootdrop.chests::%{_loc}%} is set:
+                    send "{@prefix} &cThis chest is already registered." to player
+                else:
+                    set {lootdrop.chests::%{_loc}%} to {_loc}
+                    send "{@prefix} &aChest added. &7Total: &f%size of {lootdrop.chests::*}%&7." to player
+        stop
+
+on left click:
+    if player's held item is a stick named "&b&lLootDrop Wand":
+        if clicked block is set:
+            if clicked block is a chest:
+                cancel event
+                set {_loc} to location of clicked block
+                if {lootdrop.chests::%{_loc}%} is not set:
+                    send "{@prefix} &cThis chest is not registered." to player
+                else:
+                    delete {lootdrop.chests::%{_loc}%}
+                    send "{@prefix} &cChest removed. &7Total: &f%size of {lootdrop.chests::*}%&7." to player
+
+on inventory close:
+    if {lootdrop.editing::%uuid of player%} is set:
+        set {_name} to {lootdrop.editing::%uuid of player%}
+        delete {lootdrop.editing::%uuid of player%}
+        delete {lootdrop.drops::%{_name}%::items::*}
+        loop 27 times:
+            set {_slot} to loop-number - 1
+            set {_item} to slot {_slot} of event-inventory
+            if {_item} is not air:
+                set {lootdrop.drops::%{_name}%::items::%{_slot}%} to {_item}
+        send "{@prefix} &aSaved lootdrop &f%{_name}%&a with &f%size of {lootdrop.drops::%{_name}%::items::*}% &aitems." to player
+
+every 10 seconds:
+    if {lootdrop.active} is set:
+        set {_name} to {lootdrop.active}
+        if {lootdrop.drops::%{_name}%::exists} is set:
+            loop {lootdrop.chests::*}:
+                set {_block} to block at loop-value
+                if {_block} is a chest:
+                    clear inventory of {_block}
+
+                    if {lootdrop.drops::%{_name}%::random} is true:
+                        delete {_slots::*}
+                        loop 27 times:
+                            add loop-number - 1 to {_slots::*}
+                        loop 27 times:
+                            set {_savedSlot} to loop-number - 1
+                            if {lootdrop.drops::%{_name}%::items::%{_savedSlot}%} is set:
+                                if {_slots::*} is set:
+                                    set {_item} to {lootdrop.drops::%{_name}%::items::%{_savedSlot}%}
+                                    set {_slot} to random element out of {_slots::*}
+                                    set slot {_slot} of inventory of {_block} to {_item}
+                                    remove {_slot} from {_slots::*}
+                    else:
+                        loop 27 times:
+                            set {_slot} to loop-number - 1
+                            if {lootdrop.drops::%{_name}%::items::%{_slot}%} is set:
+                                set {_item} to {lootdrop.drops::%{_name}%::items::%{_slot}%}
+                                set slot {_slot} of inventory of {_block} to {_item}
+
+            broadcast "{@eventprefix} &fLoot has spawned in the chests! &cGo grab it!"

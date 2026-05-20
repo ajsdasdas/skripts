@@ -1,0 +1,77 @@
+# ============================================================
+#   rank-giveaway.sk
+#   Command: /rank-giveaway
+#
+#   Required Addons:
+#     - Skript  (2.7+)
+#     - SkBee   (for hex color title support)
+#
+#   How it works:
+#     Phase 1 → 6s of red obfuscated scramble spam on title
+#     Phase 2 → 5s "RANK GIVEAWAY" gradient title +
+#               "ʀᴀɴᴅᴏᴍɪᴢɪɴɢ ᴘʟᴀʏᴇʀs..." subtitle
+#     Phase 3 → Winner's name announced on title for all players
+# ============================================================
+
+command /rank-giveaway:
+    permission: rankgiveaway.use
+    permission message: &cYou do not have permission to run this command.
+    trigger:
+
+        # ── Safety check ──────────────────────────────────────
+        if size of all players < 1:
+            send "&cThere are no online players to pick from!" to player
+            stop
+
+        # ── Phase 1 scramble strings ──────────────────────────
+        # §c§k = red + obfuscated (magic); works on all MC versions
+        # If your server uses SkBee hex parsing, &#FF0000&k works too
+        set {_sc::1}  to "§x§1§C§1§A§1§9§kskdushg"
+        set {_sc::2}  to "§x§1§C§1§A§1§9§ksudgsy"
+        set {_sc::3}  to "§x§1§C§1§A§1§9§ksdfddfddsf"
+        set {_sc::4}  to "§x§1§C§1§A§1§9§ksdffddsf"
+        set {_sc::5}  to "§x§1§C§1§A§1§9§ksdfddfddsfsdsdsd"
+        set {_sc::6}  to "§x§1§C§1§A§1§9§ksdf"
+        set {_sc::7}  to "§x§1§C§1§A§1§9§ks"
+        set {_sc::8}  to "§x§1§C§1§A§1§9§ksdfsdfsd"
+        set {_sc::9}  to "§x§1§C§1§A§1§9§ksfdsfdssf"
+        set {_sc::10} to "§x§1§C§1§A§1§9§kssdfsdfsdf"
+        set {_sc::11} to "§x§1§C§1§A§1§9§ksfdsffsdsf"
+        set {_sc::12} to "§x§1§C§1§A§1§9§kskjhgfdsapoiu"
+        set {_sc::13} to "§x§1§C§1§A§1§9§ksqwertasdfzxcv"
+        set {_sc::14} to "§x§1§C§1§A§1§9§ksmncbvhgfytrew"
+        set {_sc::15} to "§x§1§C§1§A§1§9§ksplokijuhygtfr"
+
+        # ── PHASE 1: Scramble effect — 6 seconds (120 ticks × 1 tick) ──
+        loop 120 times:
+            set {_a} to random integer between 1 and 15
+            set {_b} to random integer between 1 and 15
+            loop all players:
+                send title "%{_sc::%{_a}%}%" with subtitle "%{_sc::%{_b}%}%" to loop-player
+            wait 1 tick
+
+        # ── PHASE 2: RANK GIVEAWAY gradient title — 5 seconds ──────────
+        # Title: gradient orange→red "RANK GIVEAWAY" (bold, §x hex format)
+        # Subtitle: white small-caps "ʀᴀɴᴅᴏᴍɪᴢɪɴɢ ᴘʟᴀʏᴇʀs..."
+        set {_giveawayTitle} to "§x§F§0§A§C§1§4§lR§x§E§5§9§9§1§1§lA§x§D§B§8§6§0§D§lN§x§D§0§7§3§0§A§lK §x§B§B§4§C§0§3§lG§x§B§0§3§9§0§0§lI§x§B§B§4§C§0§3§lV§x§C§5§5§F§0§7§lE§x§D§0§7§3§0§A§lA§x§D§B§8§6§0§D§lW§x§E§5§9§9§1§1§lA§x§F§0§A§C§1§4§lY"
+        set {_giveawaySub}   to "§fʀᴀɴᴅᴏᴍɪᴢɪɴɢ ᴘʟᴀʏᴇʀs..."
+
+        loop all players:
+            send title {_giveawayTitle} with subtitle {_giveawaySub} to loop-player
+
+        wait 5 seconds
+
+        # ── PHASE 3: Pick and announce winner ───────────────────────────
+        set {_pool::*} to all players
+        set {_winner} to random element out of {_pool::*}
+        set {_winnerName} to name of {_winner}
+
+        loop all players:
+            send title "§f%{_winnerName}%" with subtitle "§x§F§0§A§C§1§4§lR§x§E§5§9§9§1§1§lA§x§D§B§8§6§0§D§lN§x§D§0§7§3§0§A§lK §x§B§B§4§C§0§3§lG§x§B§0§3§9§0§0§lI§x§B§B§4§C§0§3§lV§x§C§5§5§F§0§7§lE§x§D§0§7§3§0§A§lA§x§D§B§8§6§0§D§lW§x§E§5§9§9§1§1§lA§x§F§0§A§C§1§4§lY" to loop-player
+
+        # Optional: also broadcast to chat
+        broadcast "§x§F§0§A§C§1§4§lR§x§E§5§9§9§1§1§lA§x§D§B§8§6§0§D§lN§x§D§0§7§3§0§A§lK §x§B§B§4§C§0§3§lG§x§B§0§3§9§0§0§lI§x§B§B§4§C§0§3§lV§x§C§5§5§F§0§7§lE§x§D§0§7§3§0§A§lA§x§D§B§8§6§0§D§lW§x§E§5§9§9§1§1§lA§x§F§0§A§C§1§4§lY §f%{_winnerName}% §7has been selected as the winner! §6Congratulations!"
+
+        # Cleanup temporary lists
+        delete {_pool::*}
+        delete {_sc::*}

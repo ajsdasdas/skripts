@@ -1,0 +1,10 @@
+options:
+    spawn-world: world
+    spawn-radius: 100
+
+on right click:
+    if event-item is firework rocket:
+        if name of world of player is "{@spawn-world}":
+            if distance between player and spawn location of world "{@spawn-world}" <= {@spawn-radius}:
+                cancel event
+                send "&cFireworks are disabled at spawn." to player

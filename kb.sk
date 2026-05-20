@@ -1,0 +1,22 @@
+# ── KB Aura by Skript ──
+
+command /kb:
+    trigger:
+        if {kb::%player%} is true:
+            set {kb::%player%} to false
+            send "&cKB Aura &7» &cDisabled!" to player
+        else:
+            set {kb::%player%} to true
+            send "&aKB Aura &7» &aEnabled!" to player
+
+every 2 ticks:
+    loop all players:
+        if {kb::%loop-player-1%} is true:
+            set {_owner} to loop-player-1
+            loop all players:
+                if loop-player-2 is not {_owner}:
+                    if world of loop-player-2 is world of {_owner}:
+                        if distance between loop-player-2 and {_owner} <= 10:
+                            set {_dir} to vector from location of {_owner} to location of loop-player-2
+                            set {_dir} to normalized {_dir}
+                            set velocity of loop-player-2 to {_dir} * 3.8

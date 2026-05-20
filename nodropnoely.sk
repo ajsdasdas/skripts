@@ -1,0 +1,5 @@
+every 1 tick:
+    loop all dropped items:
+        if world of loop-entity is "noelyarena":
+            if item of loop-entity is stone or cobblestone or sandstone or glowstone:
+                delete loop-entity

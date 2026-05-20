@@ -1,0 +1,81 @@
+# ===================== ClearLag Skript ===================== 
+options: 
+    clear_interval: 900
+    warning_1: 30
+    warning_2: 10
+    
+    wait_1: 840
+    wait_2: 20
+    wait_3: 9
+    no_permission: &cYou're missing the required permission!
+    prefix: <##FB0000>[ClearLag]&r
+
+# Helper function — clears all dropped items except shulker boxes, elytras, and ender pearls
+function clearItems():
+    set {_cleared} to 0
+    loop all dropped items:
+        if "%type of loop-value%" does not contain "shulker":
+            if type of loop-value is not elytra:
+                if "%type of loop-value%" does not contain "ender pearl":
+                    delete loop-value
+                    add 1 to {_cleared}
+    broadcast "{@prefix} &fCleared &a%{_cleared}% &fitem(s)&7. &8(Shulker boxes and elytras were kept)"
+
+on load:
+    set {clearlag.nextClear} to now + {@clear_interval} seconds
+    broadcast "{@prefix} &fAuto-clear started. Next cleanup in <#FB0000>%({@clear_interval} / 60)% minutes&7!"
+
+every {@clear_interval} seconds:  
+    wait {@wait_1} seconds
+    broadcast "{@prefix} &fClearing items in <#FB0000>{@warning_1} seconds!"
+    wait {@wait_2} seconds
+    broadcast "{@prefix} &fClearing items in <#FB0000>{@warning_2} seconds!"
+    wait {@wait_3} seconds
+    broadcast "{@prefix} &fClearing items in <#FB0000>1 second!"
+    wait 1 second
+    clearItems()
+
+function doClear():
+    broadcast "{@prefix} &fClearing items in <#FB0000>30 seconds!"
+    wait 20 seconds
+    broadcast "{@prefix} &fClearing items in <#FB0000>10 seconds!"
+    wait 9 seconds
+    broadcast "{@prefix} &fClearing items in <#FB0000>1 second!"
+    wait 1 second
+    clearItems()
+
+command /clearlag [<text>]:
+    trigger:
+        if arg-1 is set:
+            set {_sub} to lowercase arg-1
+        if arg-1 is not set:
+            set {_timeLeft} to difference between {clearlag.nextClear} and now
+            send "{@prefix} &fNext clear in <#FB0000>%{_timeLeft}%." to player
+        if {_sub} is "now":
+            if player has permission "clearlag.admin":
+                broadcast "{@prefix} &fImmediate clear triggered!"
+                clearItems()
+            else:
+                send "{@no_permission}" to player
+        if {_sub} is "force":
+            if player has permission "clearlag.admin":
+                broadcast "{@prefix} &cForce clear initiated by &f%player%&c!"
+                doClear()
+            else:
+                send "{@no_permission}" to player
+        if {_sub} is "reload":
+            if player has permission "clearlag.admin":
+                send "{@prefix} Reloading..." to player
+                reload the current script
+                send "{@prefix} &aReloaded!"
+            else:
+                send "{@no_permission}" to player
+        if {_sub} is "help":
+            send "&7--- ClearLag Commands ---" to player
+            send "&c/clearlag &7- Time until next clear" to player
+            send "&c/clearlag now &7- Immediate clear (no warning)" to player
+            send "&c/clearlag force &7- Force clear with 30s warning" to player
+            send "&c/clearlag reload &7- Reload script" to player
+
+on tab complete of "/clearlag":
+    set tab completions for position 1 to "now" or "force" or "reload" or "help"

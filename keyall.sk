@@ -1,0 +1,3 @@
+every 1 hour:
+    execute console command "crates keyall Common 1"
+    broadcast "&aA free &fCommon Key &ahas been given to everyone!"

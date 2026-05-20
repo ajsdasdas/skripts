@@ -1,0 +1,34 @@
+command /debugregions:
+    trigger:
+        send "&eRegions at your location:" to player
+        loop regions at player:
+            send "&7- &f'%loop-value%'" to player
+
+on left click:
+    if player's tool is wooden spear, stone spear, copper spear, iron spear, golden spear, diamond spear or netherite spear:
+        if enchantment level of minecraft:lunge on player's tool >= 1:
+            set {_world} to name of player's world
+
+            # FULL DISABLE
+            if {_world} is "swordarena":
+                cancel event
+                send action bar "§x§F§F§3§4§0§0Lunge is disabled in this world!" to player
+                wait 1 tick
+                set velocity of player to vector(0, 0, 0)
+                stop
+
+            # ONLY ALLOW IN NOBLOCK REGIONS (noelyarena)
+            if {_world} is "noelyarena":
+                set {_allowed} to false
+
+                loop regions at player:
+                    set {_region} to "%loop-value%"
+                    if {_region} contains "noblock":
+                        set {_allowed} to true
+
+                if {_allowed} is false:
+                    cancel event
+                    send action bar "§x§F§F§3§4§0§0You can't lunge here!" to player
+                    wait 1 tick
+                    set velocity of player to vector(0, 0, 0)
+                    stop

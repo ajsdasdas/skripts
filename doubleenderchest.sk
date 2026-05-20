@@ -1,0 +1,145 @@
+# =============================
+# FORCE CLOSE FUNCTION
+# =============================
+function forceCloseEnderchest(loc: location):
+    set {_block} to block at {_loc}
+    if "%{_block}%" contains "ender chest":
+        set {_facing} to facing of {_block}
+        set block at {_loc} to air
+        set block at {_loc} to ender chest
+        set facing of block at {_loc} to {_facing}
+
+# =============================
+# TRANSFER OLD ITEMS
+# =============================
+function transferExistingEnderchestItems(p: player):
+    set {_uuid} to uuid of {_p}
+    loop 27 times:
+        set {_item} to slot (loop-number - 1) of {_p}'s enderchest
+        if {_item} is set:
+            set {enderchests::%{_uuid}%::%loop-number%} to {_item}
+
+# =============================
+# OPEN GUI
+# =============================
+function openCustomEnderchest(p: player):
+    set {_uuid} to uuid of {_p}
+
+    # Block opening if a save is currently in progress for this player
+    if {enderchests::saving::%{_uuid}%} is true:
+        send action bar "§cPlease wait..." to {_p}
+        stop
+
+    # Block opening if already has the chest open (anti-spam)
+    if {enderchests::open::%{_uuid}%} is true:
+        stop
+
+    if {enderchests::%{_uuid}%::1} is not set:
+        transferExistingEnderchestItems({_p})
+
+    set {_inv} to chest inventory with 6 rows named "ᴇɴᴅᴇʀ ᴄʜᴇꜱᴛ§"
+    loop 54 times:
+        set slot (loop-number - 1) of {_inv} to {enderchests::%{_uuid}%::%loop-number%}
+
+    set {enderchests::open::%{_uuid}%} to true
+    open {_inv} to {_p}
+
+# =============================
+# JOIN HANDLER
+# =============================
+on join:
+    set {_uuid} to uuid of player
+    # Clear stale flags in case of crash/disconnect mid-save
+    delete {enderchests::open::%{_uuid}%}
+    delete {enderchests::saving::%{_uuid}%}
+    if {enderchests::%{_uuid}%::1} is not set:
+        transferExistingEnderchestItems(player)
+
+# =============================
+# BLOCK VANILLA ENDERCHEST
+# =============================
+on inventory open:
+    if event-inventory is player's enderchest:
+        cancel event
+        openCustomEnderchest(player)
+
+# =============================
+# SAVE DATA (ONLY ON CLOSE)
+# =============================
+on inventory close:
+    set {_inv} to event-inventory
+    if {_inv} is set:
+        set {_name} to name of {_inv}
+        if {_name} is "ᴇɴᴅᴇʀ ᴄʜᴇꜱᴛ§":
+            set {_uuid} to uuid of player
+
+            # Mark as saving — blocks re-opening during the save window
+            set {enderchests::saving::%{_uuid}%} to true
+            delete {enderchests::open::%{_uuid}%}
+
+            wait 1 tick
+            loop 54 times:
+                set {enderchests::%{_uuid}%::%loop-number%} to slot (loop-number - 1) of {_inv}
+
+            # Save complete — allow opening again
+            delete {enderchests::saving::%{_uuid}%}
+
+# =============================
+# ADMIN VIEW SAVE
+# =============================
+on inventory close:
+    set {_inv} to event-inventory
+    if {_inv} is set:
+        set {_name} to name of {_inv}
+        if {_name} contains "ᴇɴᴅᴇʀ ᴄʜᴇꜱᴛ of":
+            # Parse target UUID from the inventory name via the stored reference
+            set {_targetName} to {_name}
+            # Admin closes — resolve target player from the name stored when opened
+            # We use a dedicated variable set at open-time for safety
+            set {_uuid} to {enderchests::adminview::%uuid of player%}
+            if {_uuid} is set:
+                wait 1 tick
+                loop 54 times:
+                    set {enderchests::%{_uuid}%::%loop-number%} to slot (loop-number - 1) of {_inv}
+                delete {enderchests::adminview::%uuid of player%}
+
+# =============================
+# COMMAND SYSTEM
+# =============================
+command /echest [<player>]:
+    permission: echest.use
+    permission message: §cYou do not have permission.
+    trigger:
+        if arg-1 is not set:
+            openCustomEnderchest(player)
+        else:
+            if player does not have permission "echest.admin":
+                send "§cYou do not have permission to view other players' enderchests."
+                stop
+            set {_target} to arg-1
+            set {_uuid} to uuid of {_target}
+            if {_uuid} is not set:
+                send "§cPlayer not found."
+                stop
+            set {_inv} to chest inventory with 6 rows named "ᴇɴᴅᴇʀ ᴄʜᴇꜱᴛ of %{_target}%"
+            loop 54 times:
+                set slot (loop-number - 1) of {_inv} to {enderchests::%{_uuid}%::%loop-number%}
+            # Store the target UUID so the close handler knows whose data to save
+            set {enderchests::adminview::%uuid of player%} to {_uuid}
+            open {_inv} to player
+            send "§aOpened %{_target}%'s enderchest."
+
+# =============================
+# ALIASES
+# =============================
+command /ec:
+    permission: echest.use
+    permission message: §cYou do not have permission.
+    trigger:
+        openCustomEnderchest(player)
+
+command /enderchest:
+    permission: echest.use
+    permission message: §cYou do not have permission.
+    trigger:
+        openCustomEnderchest(player)

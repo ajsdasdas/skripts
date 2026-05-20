@@ -1,0 +1,19 @@
+on gamemode change:
+    if future gamemode of player is creative:
+        set {_allowed} to false
+        if player has permission "group.admin":
+            set {_allowed} to true
+        if player has permission "group.sradm":
+            set {_allowed} to true
+        if player has permission "group.manager":
+            set {_allowed} to true
+        if player has permission "group.dev":
+            set {_allowed} to true
+        if player has permission "group.owner":
+            set {_allowed} to true
+        if player has permission "group.secret":
+            set {_allowed} to true
+        if {_allowed} is true:
+            stop
+        set player's gamemode to survival
+        send "&cYou are not allowed to use Creative mode." to player

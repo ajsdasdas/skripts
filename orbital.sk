@@ -1,0 +1,149 @@
+options:
+    lore: "&7Nuke Shot"
+    stab-lore: "&7Stab Shot"
+    mode: 2
+    stab-mode: 2
+    delay: 5
+    stab-delay: 5
+    summon-height: 63
+    rings: 20
+    spacing: 2
+    points: 34
+    velocity-multiplier: 3
+
+command /givestrike [<player>]:
+    permission: osc.admin
+    trigger:
+        if arg-1 is set:
+            give arg-1 fishing rod with lore {@lore}
+        else:
+            give player fishing rod with lore {@lore}
+
+command /givestab [<player>]:
+    permission: osc.admin
+    trigger:
+        if arg-1 is set:
+            give arg-1 fishing rod with lore {@stab-lore}
+        else:
+            give player fishing rod with lore {@stab-lore}
+
+on right click:
+    if lore of held item of player contains {@lore}:
+        if {@mode} is 2:
+            set {_b} to target block of player
+            if {_b} is not set:
+                send "&cYou must be looking at a block!" to player
+                stop
+
+            set {_x} to x-coordinate of {_b}
+            set {_y} to y-coordinate of {_b} + {@summon-height}
+            set {_z} to z-coordinate of {_b}
+            set {_w} to world of {_b}
+
+            play sound "entity.item.break" with volume 2 and pitch 1 to player
+            set player's tool to air
+
+            loop numbers between 1 and {@rings}:
+                set {_r} to loop-number * {@spacing}
+                loop numbers between 0 and {@points} - 1:
+                    set {_a} to (360 / {@points}) * loop-number-2
+                    set {_dx} to cos({_a}) * {_r}
+                    set {_dz} to sin({_a}) * {_r}
+                    summon tnt at location({_x}+{_dx}, {_y}, {_z}+{_dz}, {_w})
+
+    if lore of held item of player contains {@stab-lore}:
+        if {@stab-mode} is 2:
+            set {_b} to target block of player
+            if {_b} is not set:
+                send "&cYou must be looking at a block!" to player
+                stop
+            
+            set {_x} to x-coordinate of {_b}
+            set {_z} to z-coordinate of {_b}
+
+            play sound "entity.item.break" with volume 2 and pitch 1 to player
+            set player's tool to air
+
+            loop numbers between 320 and -63:
+                execute command "execute at %player% run summon minecraft:tnt %{_x}% %loop-number% %{_z}% {fuse:0}"
+
+on fishing rod reel in:
+    if lore of held item of player contains {@lore}:
+        if {@mode} is 1:
+            set {_b} to fishing bobber
+            if {_b} is not set:
+                stop
+
+            set {_x} to x-coordinate of {_b}
+            set {_y} to y-coordinate of {_b} + {@summon-height}
+            set {_z} to z-coordinate of {_b}
+            set {_w} to world of {_b}
+
+            play sound "entity.item.break" with volume 2 and pitch 1 to player
+            set player's tool to air
+
+            loop numbers between 1 and {@rings}:
+                set {_r} to loop-number * {@spacing}
+                loop numbers between 0 and {@points} - 1:
+                    set {_a} to (360 / {@points}) * loop-number-2
+                    set {_dx} to cos({_a}) * {_r}
+                    set {_dz} to sin({_a}) * {_r}
+                    summon tnt at location({_x}+{_dx}, {_y}, {_z}+{_dz}, {_w})
+
+    if lore of held item of player contains {@stab-lore}:
+        if {@stab-mode} is 1:
+            set {_b} to fishing bobber
+            if {_b} is not set:
+                stop
+            
+            set {_x} to x-coordinate of {_b}
+            set {_z} to z-coordinate of {_b}
+
+            play sound "entity.item.break" with volume 2 and pitch 1 to player
+            set player's tool to air
+
+            loop numbers between 320 and -63:
+                execute command "execute at %player% run summon minecraft:tnt %{_x}% %loop-number% %{_z}% {fuse:0}"
+
+on hook hit ground:
+    if lore of held item of player contains {@lore}:
+        if {@mode} is 1:
+            set {_b} to fishing bobber
+            if {_b} is not set:
+                stop
+
+            set {_x} to x-coordinate of {_b}
+            set {_y} to y-coordinate of {_b} + {@summon-height}
+            set {_z} to z-coordinate of {_b}
+            set {_w} to world of {_b}
+
+            play sound "entity.item.break" with volume 2 and pitch 1 to player
+            set player's tool to air
+
+            loop numbers between 1 and {@rings}:
+                set {_r} to loop-number * {@spacing}
+                loop numbers between 0 and {@points} - 1:
+                    set {_a} to (360 / {@points}) * loop-number-2
+                    set {_dx} to cos({_a}) * {_r}
+                    set {_dz} to sin({_a}) * {_r}
+                    summon tnt at location({_x}+{_dx}, {_y}, {_z}+{_dz}, {_w})
+
+    if lore of held item of player contains {@stab-lore}:
+        if {@stab-mode} is 1:
+            set {_b} to fishing bobber
+            if {_b} is not set:
+                stop
+            
+            set {_x} to x-coordinate of {_b}
+            set {_z} to z-coordinate of {_b}
+
+            play sound "entity.item.break" with volume 2 and pitch 1 to player
+            set player's tool to air
+
+            loop numbers between 320 and -63:
+                execute command "execute at %player% run summon minecraft:tnt %{_x}% %loop-number% %{_z}% {fuse:0}"
+
+on fishing line cast:
+    if lore of held item of player contains {@lore} or {@stab-lore}:
+        wait 1 tick
+        set velocity of fishing bobber to velocity of fishing bobber * {@velocity-multiplier}

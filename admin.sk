@@ -1,0 +1,80 @@
+# ─────────────────────────────────────────────
+#  Admin Commands  |  admin_commands.sk
+#  Requires: Skript 2.7+ only (no addons)
+#  Commands: /clearofflineinv  /deathset
+#
+#  NOTE: /deathset uses a dummy scoreboard called
+#  "Deaths" because base Skript cannot modify the
+#  real Minecraft death statistic. Install SkBee
+#  to change the real stat instead.
+# ─────────────────────────────────────────────
+
+
+# ══════════════════════════════════════════════
+#  Create the scoreboard objective on startup
+# ══════════════════════════════════════════════
+
+on script load:
+    execute console command "scoreboard objectives add Deaths dummy Deaths"
+
+
+# ══════════════════════════════════════════════
+#  /clearofflineinv <player>
+#  Clears the inventory of an offline player.
+#  Permission: admin.clearofflineinv
+# ══════════════════════════════════════════════
+
+command /clearofflineinv <offlineplayer>:
+    permission: admin.clearofflineinv
+    permission message: "&cYou don't have permission to use this command."
+    description: Clears the inventory of an offline player.
+    usage: /clearofflineinv <player>
+    trigger:
+        if argument 1 is online:
+            send "&eNote: &f%argument 1% &eis online. Clearing their inventory now anyway."
+
+        clear the inventory of argument 1
+
+        send "&aSuccessfully cleared the inventory of &f%argument 1%&a."
+        log "[AdminCMD] %player% cleared the inventory of %argument 1%." to "plugins/Skript/logs/admin_commands.log"
+
+
+# ══════════════════════════════════════════════
+#  /deathset <player> <deaths>
+#  Sets the "Deaths" scoreboard value for a player.
+#  Permission: admin.deathset
+# ══════════════════════════════════════════════
+
+command /deathset <offlineplayer> <integer>:
+    permission: admin.deathset
+    permission message: "&cYou don't have permission to use this command."
+    description: Sets a player's death count.
+    usage: /deathset <player> <number>
+    trigger:
+        if argument 2 < 0:
+            send "&cDeath count cannot be negative. Use 0 or higher."
+            stop
+
+        set {_uuid} to uuid of argument 1
+        set {deathset.deaths::%{_uuid}%} to argument 2
+
+        # Apply scoreboard score via vanilla command
+        execute console command "scoreboard players set %argument 1% Deaths %argument 2%"
+
+        if argument 1 is online:
+            send "&aSet &f%argument 1%&a's deaths to &f%argument 2%&a (applied immediately)."
+        else:
+            send "&aSet &f%argument 1%&a's deaths to &f%argument 2%&a (will apply on next login)."
+
+        log "[AdminCMD] %player% set death count of %argument 1% to %argument 2%." to "plugins/Skript/logs/admin_commands.log"
+
+
+# ══════════════════════════════════════════════
+#  Re-apply stored death count when the player logs in
+# ══════════════════════════════════════════════
+
+on join:
+    set {_uuid} to uuid of player
+    if {deathset.deaths::%{_uuid}%} is set:
+        execute console command "scoreboard players set %player% Deaths %{deathset.deaths::%{_uuid}%}%"
+        delete {deathset.deaths::%{_uuid}%}

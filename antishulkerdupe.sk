@@ -1,0 +1,4 @@
+on place of shulker_box:
+    if player is not op:
+        wait 1 tick
+        remove 1 of shulker_box from player's inventory

@@ -1,0 +1,17 @@
+on player move:
+    if world of player is "noelyarena":
+        if region at player does not contain "noely":
+            teleport player to spawn of world "noelyarena"
+
+on player move:
+    if world of player is "koths":
+        if region at player does not contain "kothoriginal":
+            teleport player to spawn of world "koths"
+
+on player move:
+    if world of player is "arenaffa":
+        if region at player does not contain "ffa":
+            teleport player to spawn of world "test"
+
+
+

@@ -1,0 +1,19 @@
+on chat:
+    if player has permission "staff.chat":
+        if {staffchat::%player's uuid%} is true:
+            cancel event
+            loop all players:
+                if loop-player has permission "staff.chat":
+                    if {staffchat::%loop-player's uuid%} is not false:
+                        send "<##FF0000>⚠ <##FF0000>&l[STAFF] &f%player%&7: %message%" to loop-player
+
+command /staffchat:
+    aliases: /sc
+    permission: staff.chat
+    trigger:
+        if {staffchat::%player's uuid%} is true:
+            delete {staffchat::%player's uuid%}
+            send "&7Staff chat is now &cdisabled&7."
+        else:
+            set {staffchat::%player's uuid%} to true
+            send "&7Staff chat is now &aenabled&7."

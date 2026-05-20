@@ -1,0 +1,50 @@
+# =========================
+# Chat Filter Configuration
+# =========================
+
+on load:
+    clear {chatfilter.words::*}
+    add "fuck" to {chatfilter.words::*}
+    add "cum" to {chatfilter.words::*}
+    add "sex" to {chatfilter.words::*}
+    add "nigger" to {chatfilter.words::*}
+    add "nga" to {chatfilter.words::*}
+    add "nigga" to {chatfilter.words::*}
+    add "rape" to {chatfilter.words::*}
+    add "motherfucker" to {chatfilter.words::*}
+    add "mf" to {chatfilter.words::*}
+    add "bitch" to {chatfilter.words::*}
+    add "shit" to {chatfilter.words::*}
+    add "idgaf" to {chatfilter.words::*}
+    add "pussy" to {chatfilter.words::*}
+    add "fck" to {chatfilter.words::*}
+    add "porn" to {chatfilter.words::*}
+    add "stfu" to {chatfilter.words::*}
+    add "ez" to {chatfilter.words::*}
+    add "dick" to {chatfilter.words::*}
+    add "dumbass" to {chatfilter.words::*}
+    add "asshole" to {chatfilter.words::*}
+    add "faggot" to {chatfilter.words::*}
+    add "bastard" to {chatfilter.words::*}
+
+
+# =========================
+# Chat Event
+# =========================
+
+on chat:
+    # Staff bypass
+    if player has permission "chatfilter.bypass":
+        stop
+
+    # Loop through banned words
+    loop {chatfilter.words::*}:
+        if message contains loop-value:
+            cancel event
+
+            send "§x§F§F§4§3§1§F§l[!] &fThis type of language is not allowed here." to player
+
+            # Console log (correct method)
+            send "[Filter] %player% tried to say: %message%" to console
+
+            stop

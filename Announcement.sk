@@ -1,0 +1,22 @@
+command /shout [<text>]:
+    permission: core.shout
+    permission message: &cYou do not have access to this command!
+    trigger:
+        if arg-1 is not set:
+            send "&cNo text provided"
+            stop
+
+        # Length check (120 characters max)
+        if length of arg-1 > 120:
+            send "&cYour message is too long. Maximum length is 120 characters."
+            stop
+
+        play sound "ENTITY_ENDERMAN_AMBIENT" at pitch 2 to player
+
+        set {_msg} to "§x§0§0§F§F§9§8§lS§x§0§0§F§F§9§8§lH§x§0§0§F§F§9§8§lO§x§0§0§F§F§9§8§lU§x§0§0§F§F§9§8§lT &8| &f%arg-1% &7(from %player%)"
+        set {_i} to 0
+
+        while {_i} < 40: # 8 seconds total
+            add 1 to {_i}
+            send action bar {_msg} to all players
+            wait 0.2 seconds

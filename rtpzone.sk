@@ -1,0 +1,139 @@
+# Enhanced RTP Zone Skript
+# This script creates an RTP Zone with advanced features and customization
+
+options:
+    prefix: &x&F&F&0&0&0&0ʀ&x&F&F&0&0&0&0ᴛ&x&F&F&0&0&0&0ᴘ &x&F&F&0&0&0&0ᴢ&x&F&F&0&0&0&0ᴏ&x&F&F&0&0&0&0ɴ&x&F&F&0&0&0&0ᴇ &8| 
+    world: world
+    minimumxz: 3000
+    maximumxz: 7000
+    blockblacklist: lava or water or cactus or bamboo
+    maxattempts: 50
+    particlesmode: "ball"
+    particleradius: 2
+    particlestype: "Blindness"
+    soundeffect: "ENTITY_ENDERMAN_TELEPORT"
+
+variables:
+    {rtpzone::players::*} = none
+    {rtpzone::timer} = 30
+    {rtpzone::cooldown::*} = none
+
+function findSafeLocation() :: location:
+    set {_attempts} to 0
+    while {_attempts} < {@maxattempts}:
+        set {_x} to random number between {@minimumxz} and {@maximumxz}
+        set {_z} to random number between {@minimumxz} and {@maximumxz}
+        set {_loc} to location at ({_x}, 320, {_z}) in world "{@world}"
+        
+        # Search downward for a safe block
+        loop 320 times:
+            set {_block} to block at {_loc}
+            set {_below} to block below {_loc}
+            
+            # Check if current block is safe to stand on
+            if {_below} is grass block:
+                if {_block} is air:
+                    if block above {_loc} is air:
+                        if block below {_below} is not {@blockblacklist}:
+                            return {_loc}
+            
+            # Move down one block
+            remove 1 from y-coordinate of {_loc}
+            if y-coordinate of {_loc} <= 0:
+                exit 1 loop
+        
+        add 1 to {_attempts}
+    return location at (0, 100, 0) in world "{@world}" # Fallback spawn if no safe location found
+
+function playTeleportEffects(p: player):
+    if {@soundeffect} is not "none":
+        play sound {@soundeffect} with volume 1 and pitch 1 at {_p} for {_p}
+    
+    if {@particlesmode} is "ball":
+        loop all blocks in radius {@particleradius} around {_p}:
+    else if {@particlesmode} is "splash":
+        set {_y} to {_p}'s y coordinate
+        remove 1 from {_y}
+        loop all blocks in radius {@particleradius} around {_p}:
+            if loop-block's y coordinate is {_y}:
+
+every second:
+    if {rtpzone::timer} > 0:
+        # First decrement the timer
+        remove 1 from {rtpzone::timer}
+        
+        # Then check for players in the RTP region and update displays
+        loop {rtpzone::players::*}:
+            if loop-value is online:
+                if "%region at loop-value%" contains "rtp":
+                    # Now the timer value matches what placeholders will show
+                    send title "§x§F§F§2§B§2§B§lR§x§F§F§2§B§2§B§lT§x§F§F§2§B§2§B§lP §x§F§F§2§B§2§B§lZ§x§F§F§2§B§2§B§lO§x§F§F§2§B§2§B§lN§x§F§F§2§B§2§B§lE" with subtitle "§x§F§F§2§B§2§Bᴛᴇʟᴇᴘᴏʀᴛɪɴɢ ɪɴ &f%{rtpzone::timer}% §x§F§F§2§B§2§Bsᴇᴄᴏɴᴅs!" to loop-value for 30 seconds with fade in 0 second and fade out 0 second
+                    # Play the sound when updating the subtitle
+                    play sound "BLOCK_NOTE_BLOCK_PLING" with volume 1 and pitch 2 at loop-value for loop-value
+    else if {rtpzone::timer} <= 0:
+        # Find a single safe location for all players
+        set {_safe_location} to findSafeLocation()
+        
+        # Teleport all players in the zone to the same location
+        loop {rtpzone::players::*}:
+            if "%region at loop-value%" contains "rtp":
+                teleport loop-value to {_safe_location}
+                playTeleportEffects(loop-value)
+                send "{@prefix} &fHunt or get hunted!" to loop-value
+                send title "§x§F§F§2§B§2§B§lR§x§F§F§2§B§2§B§lT§x§F§F§2§B§2§B§lP §x§F§F§2§B§2§B§lZ§x§F§F§2§B§2§B§lO§x§F§F§2§B§2§B§lN§x§F§F§2§B§2§B§lE" with subtitle "&fʜᴜɴᴛ ᴏʀ ɢᴇᴛ ʜᴜɴᴛᴇᴅ!" to loop-value for 3 seconds
+        
+        # Reset timer after teleporting
+        set {rtpzone::timer} to 30
+
+on entering region "rtp":
+    add player to {rtpzone::players::*}
+    send "{@prefix} &aYou entered the RTP zone!" to player
+
+on leaving region "rtp":
+    remove player from {rtpzone::players::*}
+    send "{@prefix} &cYou left the RTP zone" to player
+    send title "§x§F§F§2§B§2§B§lR§x§F§F§2§B§2§B§lT§x§F§F§2§B§2§B§lP §x§F§F§2§B§2§B§lZ§x§F§F§2§B§2§B§lO§x§F§F§2§B§2§B§lN§x§F§F§2§B§2§B§lE" with subtitle "&fʏᴏᴜ ʟᴇғᴛ ᴛʜᴇ ʀᴛᴘ ᴢᴏɴᴇ" to player for 3 seconds
+
+command /rtpzone [<text>] [<text>]:
+    permission: rtpzone.admin
+    permission message: &cYou don't have permission to use this command!
+    trigger:
+        if arg-1 is "reload":
+            clear {rtpzone::players::*}
+            set {rtpzone::timer} to 30
+            reload script "rtpzone"
+            send "{@prefix} &aScript reloaded successfully!" to player
+        
+        else if arg-1 is "status":
+            send "{@prefix} &aZone Status:" to player
+            send "&7Players in zone: %size of {rtpzone::players::*}%" to player
+            send "&7Timer: %{rtpzone::timer}% seconds" to player
+            send "&7World: {@world}" to player
+            send "&7Area: {@minimumxz} to {@maximumxz}" to player
+        
+        else if arg-1 is "forcertp":
+            if arg-2 is set:
+                set {_target} to arg-2 parsed as player
+                if {_target} is online:
+                    set {_loc} to findSafeLocation()
+                    teleport {_target} to {_loc}
+                    playTeleportEffects({_target})
+                    send "{@prefix} &aForce teleported %{_target}% to a random location!" to player
+                else:
+                    send "{@prefix} &cPlayer not found!" to player
+            else:
+                send "{@prefix} &cUsage: /rtpzone forcertp <player>" to player
+        
+        else:
+            send "{@prefix} &cUsage: /rtpzone <reload|status|forcertp>" to player
+
+on quit:
+    remove player from {rtpzone::players::*}
+
+# PlaceholderAPI Integration
+placeholderapi placeholder with the prefix "rtpzone":
+    if the identifier is "timer":
+        if {rtpzone::timer} is set:
+            set the result to "%{rtpzone::timer}%"
+        else:
+            set the result to "0"

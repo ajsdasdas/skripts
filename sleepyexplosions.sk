@@ -1,0 +1,13 @@
+command /sfireball:
+    description: Summon a massive downward fireball
+    permission: sleepyexplosions.fireball
+    trigger:
+        execute console command "execute as %player% at %player% run summon minecraft:fireball ~ ~ ~ {direction:[0.0,-10.0,0.0],ExplosionPower:100}"
+        send "&8[&fSleepyExplosions&8] &7You summoned a &afireball!" to player
+
+command /screeper:
+    description: Summon an instant-exploding creeper
+    permission: sleepyexplosions.creeper
+    trigger:
+        execute console command "execute as %player% at %player% run summon minecraft:creeper ~ ~ ~ {ExplosionRadius:100,ignited:1b,Fuse:0}"
+        send "&8[&fSleepyExplosions&8] &7You summoned a &acreeper!" to player

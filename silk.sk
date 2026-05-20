@@ -1,0 +1,8 @@
+command /silktouchall:
+    permission: silktouchall.use
+    permission message: &cYou do not have permission to execute this command.
+    trigger:
+        loop all players:
+            give loop-player a netherite pickaxe of silk touch 1 and efficiency 5
+            send "&aYou have received a Silk Touch &8Netherite&a Pickaxe." to loop-player
+        send "&aSuccessfully distributed Silk Touch Netherite pickaxes to all online players." to sender

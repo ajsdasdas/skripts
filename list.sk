@@ -1,0 +1,27 @@
+# =====================================================
+#  ONLINE PLAYERS LIST (Plain Output)
+# =====================================================
+
+command /list:
+    permission: list.admin
+    permission message: You do not have permission.
+    trigger:
+
+        set {_count} to size of all players
+
+        send ""
+        send "Online Players (%{_count}%):"
+        send "-------------------------"
+
+        if {_count} is 0:
+            send "No players are currently online."
+            stop
+
+        loop all players:
+            set {_ping} to "N/A"
+            if ping of loop-player is set:
+                set {_ping} to "%ping of loop-player%"
+
+            send "%loop-player% - Ping: %{_ping}% ms"
+
+        send ""

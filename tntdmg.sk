@@ -1,0 +1,81 @@
+# ============================================================
+#   TNT Damage Multiplier
+#   Requires: Skript + SkBee
+#
+#   /tntdamage          → shows current multiplier
+#   /tntdamage <value>  → sets the multiplier (op only)
+#
+#   Affects:  TNT blocks (Primed TNT) & TNT Minecarts
+#   Ignores:  End Crystals & Respawn Anchors
+# ============================================================
+
+options:
+    prefix: &8[&6TNT&8] &r
+    default-multiplier: 1.0
+
+# ========================
+#  Initialise on load
+# ========================
+
+on load:
+    if {tntdamage::multiplier} is not set:
+        set {tntdamage::multiplier} to {@default-multiplier}
+
+# ========================
+#  Command
+# ========================
+
+command /tntdamage [<number>]:
+    permission: op
+    permission message: {@prefix}&cYou don't have permission to use this command!
+    trigger:
+
+        # Show current value when no argument given
+        if arg-1 is not set:
+            send "{@prefix}&7Current multiplier: &e%{tntdamage::multiplier}%x"
+            send "{@prefix}&8Usage: &f/tntdamage <value>"
+            send "{@prefix}&8Examples: &71.0 &8= default &f| &72.0 &8= double &f| &70.5 &8= half"
+            stop
+
+        # Validate input
+        if arg-1 <= 0:
+            send "{@prefix}&cMultiplier must be greater than 0! (e.g. 0.5, 1.0, 2.0)"
+            stop
+
+        # Apply and confirm
+        set {tntdamage::multiplier} to arg-1
+
+        if arg-1 > 1:
+            send "{@prefix}&aTNT damage multiplier set to &e%{tntdamage::multiplier}%x &a(buffed)!"
+        else if arg-1 < 1:
+            send "{@prefix}&aTNT damage multiplier set to &e%{tntdamage::multiplier}%x &a(nerfed)!"
+        else:
+            send "{@prefix}&aTNT damage multiplier reset to &e1.0x &a(default)!"
+
+# ========================
+#  Damage Handler
+# ========================
+#
+#  How this works:
+#    - "entity explosion" covers: Primed TNT, TNT Minecarts, AND End Crystals
+#    - "block explosion"  covers: Respawn Anchors, Beds in Nether/End
+#
+#  We only intercept "entity explosion" and then use SkBee's damage source
+#  to check the DIRECT entity that caused it.
+#  - Primed TNT      → primed tnt   ✔ multiply
+#  - TNT Minecart    → tnt minecart ✔ multiply
+#  - End Crystal     → end crystal  ✗ skip
+#  Block explosions (Respawn Anchors) are already skipped by the cause check.
+#
+# ========================
+on damage of entity:
+    if damage cause is entity explosion:
+
+        if {tntdamage::multiplier} is not set:
+            stop
+        if {tntdamage::multiplier} = 1:
+            stop
+
+        # Identify TNT via stored tag
+        if {tntowner::%uuid of attacker%} is set:
+            set damage to damage * {tntdamage::multiplier}

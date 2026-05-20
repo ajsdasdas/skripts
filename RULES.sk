@@ -1,0 +1,21 @@
+# ██████╗░██╗░░░██╗██╗░░░░░███████╗░██████╗
+# ██╔══██╗██║░░░██║██║░░░░░██╔════╝██╔════╝
+# ██████╔╝██║░░░██║██║░░░░░█████╗░░╚█████╗░
+# ██╔══██╗██║░░░██║██║░░░░░██╔══╝░░░╚═══██╗
+# ██║░░██║╚██████╔╝███████╗███████╗██████╔╝
+# ╚═╝░░╚═╝░╚═════╝░╚══════╝╚══════╝╚═════╝░
+# Rules Skript by NEZNAMY(AawCloudyx).
+# Please leave a positive review.
+# https://www.spigotmc.org/members/reskript.1765448/
+options:
+    discord_link: https://discord.gg/fGDs9wrZP5 #<- put your discord server link here. (you can even use a website.)
+command /rules:
+    trigger:
+        set {_rules} to a new chest inventory with 3 rows named "                <##3F3F3F>ʀᴜʟᴇꜱ"
+        set slot 10 of {_rules} to knowledge book named "<##7afc00>&lCLIENT RULES" with Lore "", "<##7afc00>⏺ &fDo not use movement modification mods", "<##7afc00>⏺ &fDo not use inventory management mods", "<##7afc00>⏺ &fDo not use health display mods", "<##7afc00>⏺ &fDo not use radar", "<##7afc00>⏺ &fDo not use Freecam", "<##7afc00>⏺ &fDo not use auto place" and "<##7afc00>⏺ &fDo not use macros or harmful scripts"
+        set slot 13 of {_rules} to knowledge book named "<##f97603>&lGENERAL RULES" with Lore "", "<##f97603>⏺ &fDo not exploit unintended bugs", "<##f97603>⏺ &fDo not attempt to duplicate", "<##f97603>⏺ &fDo not duplicate items", "<##f97603>⏺ &fDo not trade with real money", "<##f97603>⏺ &fDo not trade between servers", "<##f97603>⏺ &fDo not search or use the world seed", "<##f97603>⏺ &fDo not impersonate staff", "<##f97603>⏺ &fDo not evade punishments", "<##f97603>⏺ &fDo not lie to staff members", "<##f97603>⏺ &fDo not do doxxing, swatting or DDosing", "<##f97603>⏺ &fDo not engage in kill farming", "<##f97603>⏺ &fYou must report all bugs, glitches and cheaters" and " &fIn the Discord server <##f97603>({@discord_link})"
+        set slot 16 of {_rules} to knowledge book named "<##03a3f9>&lCHAT RULES" with Lore "", "<##03a3f9>⏺ &fDo not spam or cause riots", "<##03a3f9>⏺ &fDo not harass or harm others", "<##03a3f9>⏺ &fDo not share others' personal information", "<##03a3f9>⏺ &fDo not advertise or self-promote", "<##03a3f9>⏺ &fDo not engage in racism, discrimination or hate speech" and "<##03a3f9>⏺ &fDo not make death threats or encourage suicide"
+        open {_rules} to player
+on inventory click:
+    if name of event-inventory is "                <##3F3F3F>ʀᴜʟᴇꜱ":
+        cancel event

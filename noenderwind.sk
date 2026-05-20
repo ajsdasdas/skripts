@@ -1,0 +1,17 @@
+on projectile launch:
+    set {_world} to name of world of shooter
+    if {_world} is "swordarena":
+        if projectile is a wind charge:
+            cancel event
+            send action bar "§x§F§F§3§4§0§0You cannot use Wind Charges in this world." to shooter
+        if projectile is an ender pearl:
+            cancel event
+            send action bar "§x§F§F§3§4§0§0You cannot use Ender Pearls in this world." to shooter
+
+on right click:
+    set {_world} to name of world of player
+    if {_world} is "swordarena":
+        if player's tool is a trident:
+            if player's tool is enchanted with riptide:
+                cancel event
+                send action bar "§x§F§F§3§4§0§0You cannot use Riptide in this world." to player

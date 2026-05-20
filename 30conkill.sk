@@ -1,0 +1,27 @@
+on death of player:
+    set {_killer} to attacker
+    if {_killer} is a player:
+        set {_victim} to victim's name
+        set {_killerName} to {_killer}'s name
+
+        # If 6 hours have passed since the first kill, reset the count
+        if {firstkilltime::%{_killerName}%::%{_victim}%} is set:
+            set {_diff} to difference between now and {firstkilltime::%{_killerName}%::%{_victim}%}
+            if {_diff} >= 6 hours:
+                delete {killcount::%{_killerName}%::%{_victim}%}
+                delete {firstkilltime::%{_killerName}%::%{_victim}%}
+
+        # Record the time of the first kill
+        if {firstkilltime::%{_killerName}%::%{_victim}%} is not set:
+            set {firstkilltime::%{_killerName}%::%{_victim}%} to now
+
+        # Increment kill count
+        add 1 to {killcount::%{_killerName}%::%{_victim}%}
+
+        # Kill farming check
+        if {killcount::%{_killerName}%::%{_victim}%} >= 2:
+            send "§x§F§F§0§0§3§EKill Farming Detected! §fYou won't receive a reward for killing §x§F§F§D§9§0§0%{_victim}%§f again for 6 hours." to {_killer}
+            stop
+
+        # First kill — give reward
+        execute console command "c give %{_killerName}% 30"

@@ -1,0 +1,45 @@
+# ============================================================
+#   vote.sk
+#   Command: /voteforrus
+#
+#   Required Addons:
+#     - Skript (2.7+)
+#
+#   Flow:
+#     1. Sends gradient "VOTE FOR US!" title + subtitle to all
+#        players for 5 seconds
+#     2. Shows "LINK IN CHAT!" title to all players
+#     3. Locks chat for 10 seconds & broadcasts the vote link
+#     4. Unlocks chat automatically after 10 seconds
+# ============================================================
+
+command /voteforus:
+    permission: vote.use
+    permission message: §fYou do not have permission to run this command.
+    trigger:
+
+        # ── PHASE 1: VOTE FOR US! title (5 seconds) ─────────────────────
+        loop all players:
+            send title "§x§0§0§F§F§2§6§lV§x§1§D§F§F§1§D§lO§x§3§B§F§F§1§3§lT§x§5§8§F§F§0§A§lE §x§4§E§F§F§0§D§lF§x§2§7§F§F§1§9§lO§x§0§0§F§F§2§6§lR §x§3§B§F§F§1§3§lU§x§5§8§F§F§0§A§lS§x§7§5§F§F§0§0§l!" with subtitle "§fᴠᴏᴛɪɴɢ ʜᴇʟᴘs ᴜs ɢʀᴏᴡ" to loop-player
+
+        wait 5 seconds
+
+        # ── PHASE 2: LINK IN CHAT! title ────────────────────────────────
+        loop all players:
+            send title "§x§F§F§E§3§0§0§lLINK IN CHAT!" with subtitle "§fᴄʟɪᴄᴋ ᴏɴ ɪᴛ" to loop-player
+
+        # ── PHASE 3: Lock chat & broadcast the link ──────────────────────
+        set {vote.chatlocked} to true
+
+        broadcast "&f&n<link:https://minecraftservers.org/vote/679313/>CLICK HERE TO VOTE!"
+
+        wait 10 seconds
+
+        # ── PHASE 4: Unlock chat ─────────────────────────────────────────
+        delete {vote.chatlocked}
+
+# ── Chat lock listener ───────────────────────────────────────────────────
+on chat:
+    if {vote.chatlocked} is true:
+        cancel event
+        send "§fChat is currently locked. Please wait..." to player

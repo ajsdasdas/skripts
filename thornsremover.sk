@@ -1,0 +1,78 @@
+options:
+    thornsremove-gui-name: &8ᴛʜᴏʀɴꜱ ʀᴇᴍᴏᴠᴇʀ
+
+command /thornsremove:
+    trigger:
+        set {_gui} to chest inventory with 3 rows named "{@thornsremove-gui-name}"
+
+        set {_panel} to gray stained glass pane named "&7"
+        loop 27 times:
+            set slot loop-number - 1 of {_gui} to {_panel}
+
+        set {_remover} to globe banner pattern named "§x§E§2§0§0§0§0§lR§x§E§7§0§0§0§0§lE§x§E§C§0§0§0§0§lM§x§F§1§0§0§0§0§lO§x§F§5§0§0§0§0§lV§x§F§A§0§0§0§0§lE§x§F§F§0§0§0§0§lR"
+        set lore of {_remover} to "&7 " and "&8Drag armor with Thorns here." and "&8Removes only the Thorns enchant." and "&8Keeps all other enchants."
+        set slot 13 of {_gui} to {_remover}
+
+        set {thornsremove::open::%uuid of player%} to true
+        open {_gui} to player
+
+
+on inventory click:
+    if {thornsremove::open::%uuid of player%} is true:
+        set {_raw} to raw index of event-slot
+
+        if click type is left mouse button with shift:
+            cancel event
+            stop
+        if click type is right mouse button with shift:
+            cancel event
+            stop
+        if click type is number key:
+            cancel event
+            stop
+        if click type is swap offhand:
+            cancel event
+            stop
+        if click type is double click:
+            cancel event
+            stop
+
+        if {_raw} < 27:
+            cancel event
+
+            if {_raw} is 13:
+                if player's cursor slot is air:
+                    stop
+
+                set {_item} to player's cursor slot
+                set {_type} to "%type of {_item}%"
+
+                if {_type} does not contain "helmet":
+                    if {_type} does not contain "chestplate":
+                        if {_type} does not contain "leggings":
+                            if {_type} does not contain "boots":
+                                send "&cYou can only use armor pieces!" to player
+                                stop
+
+                if enchantment level of thorns of {_item} > 0:
+                    set enchantment level of thorns of {_item} to 0
+                    set player's cursor slot to {_item}
+                    play sound "block.note_block.pling" to player
+                    send "&aRemoved Thorns from your armor!" to player
+                    stop
+
+                send "&cThis armor does not have Thorns!" to player
+
+
+on inventory drag:
+    if {thornsremove::open::%uuid of player%} is true:
+        cancel event
+
+
+on inventory close:
+    if {thornsremove::open::%uuid of player%} is true:
+        delete {thornsremove::open::%uuid of player%}
+
+
+on quit:
+    delete {thornsremove::open::%uuid of player%}

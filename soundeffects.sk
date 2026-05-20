@@ -1,0 +1,13 @@
+options:
+    radius: 200
+    sound: entity.wither.spawn
+    volume: 0.6
+    pitch: 1
+
+on death of player:
+    set {_deathLoc} to location of victim
+
+    loop all players:
+        if world of loop-player is world of victim:
+            if distance between loop-player and {_deathLoc} <= {@radius}:
+                play sound "{@sound}" with volume {@volume} and pitch {@pitch} to loop-player

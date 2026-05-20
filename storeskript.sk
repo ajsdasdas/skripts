@@ -1,0 +1,12 @@
+options:
+	prefix: 
+	SoundD: BLOCK_NOTE_BLOCK_PLING
+	SoundD-Volume: 1
+	SoundD-Pitch: 2
+
+command /store:
+    aliases: /website, /web, /store
+    trigger:
+        send "§x§f§f§0§0§0§0ᴄʜᴇᴄᴋᴏᴜᴛ ᴏᴜʀ ꜱᴛᴏʀᴇ" to player
+        send "§x§f§f§0§0§0§0&l•&r &f&n<link:https://maceful.paynow.store/>CLICK HERE" to player
+        play sound "{@SoundD}" with volume {@SoundD-Volume} and pitch {@SoundD-Pitch}

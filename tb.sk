@@ -1,0 +1,3 @@
+command /crystalshop:
+    trigger:
+        execute player command "shop menu special"

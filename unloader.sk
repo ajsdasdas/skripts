@@ -1,0 +1,45 @@
+# ============================================================
+#  Unload All Chunks — unload_all_chunks.sk
+#  Requires: Skript 2.6+ (uses native "loaded chunks of world")
+#  Optional: SkBee (enables "without saving" flag on unload)
+#
+#  Command : /unloadchunks
+#  Permission: chunks.unload
+# ============================================================
+
+command /unloadchunks:
+    permission: chunks.unload
+    permission message: "&cYou don't have permission to use this command."
+    trigger:
+        set {_total} to 0
+        set {_skipped} to 0
+
+        # Loop through every world loaded on the server
+        loop all worlds:
+            set {_world} to loop-world
+            set {_chunks::*} to loaded chunks of {_world}
+
+            loop {_chunks::*}:
+                set {_chunk} to loop-value-2
+
+                # Safety: don't unload chunks that have players in them
+                set {_hasPlayer} to false
+                loop all players:
+                    if chunk of loop-player is {_chunk}:
+                        set {_hasPlayer} to true
+
+                if {_hasPlayer} is false:
+                    unload {_chunk}
+                    add 1 to {_total}
+                else:
+                    add 1 to {_skipped}
+
+            # Clear the temp list to avoid memory buildup between worlds
+            clear {_chunks::*}
+
+        send "&aSuccessfully unloaded &e%{_total}% &achunk(s) across all worlds." to sender
+        if {_skipped} > 0:
+            send "&7(&c%{_skipped}% chunk(s) skipped — players were present&7)" to sender
+
+        # Log to console as well
+        log "[UnloadChunks] %{_total}% chunk(s) unloaded, %{_skipped}% skipped (player chunks) by %sender%"

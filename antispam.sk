@@ -1,0 +1,14 @@
+options:
+  cooldown: 2 seconds
+
+on chat:
+    if player is op:
+        stop
+
+    if {lastChat.%player%} is set:
+        if difference between now and {lastChat.%player%} < {@cooldown}:
+            cancel event
+            send "§x§F§F§4§3§1§F§l[!] &fYou are sending messages too fast! Please wait a moment before sending another message." to player
+            stop
+
+    set {lastChat.%player%} to now

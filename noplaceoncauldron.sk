@@ -1,0 +1,5 @@
+on block place:
+    type of event-block is cauldron, water cauldron, lava cauldron or powder snow cauldron
+    type of held item is shulker box, white shulker box, orange shulker box, magenta shulker box, light blue shulker box, yellow shulker box, lime shulker box, pink shulker box, gray shulker box, light gray shulker box, cyan shulker box, purple shulker box, blue shulker box, brown shulker box, green shulker box, red shulker box or black shulker box
+    cancel event
+    send action bar "&cYou can't place a shulker box on a cauldron!" to player

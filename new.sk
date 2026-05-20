@@ -1,0 +1,11 @@
+command /new:
+    trigger:
+        if {new.used.%player%} is set:
+            send "&cYou have already claimed your reward." to player
+            stop
+
+        set {new.used.%player%} to true
+
+        execute console command "c give %player% 1500"
+
+        send "&aReward claimed successfully. You received 1500 crystals." to player

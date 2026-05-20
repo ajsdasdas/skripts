@@ -1,0 +1,9 @@
+command /clearchat:
+    aliases: cc
+    permission: chat.clear
+    permission message: &cYou do not have permission to clear chat.
+    trigger:
+        loop all players:
+            loop 200 times:
+                send "" to loop-player
+        broadcast "<#FF0000>&lCHAT CLEARED &8» &7by &f%player%"

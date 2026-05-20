@@ -1,0 +1,5 @@
+on join:
+    join message is ""
+
+on quit:
+    quit message is ""

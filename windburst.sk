@@ -1,0 +1,60 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║           Wind Burst Management — by Skript                 ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+command /macewb:
+    trigger:
+        if held item of player is not a mace:
+            send "&cYou must be holding a mace." to player
+            stop
+        openWindBurstGui(player)
+
+function openWindBurstGui(p: player):
+    set {WindBurst.Mace::%{_p}%} to held item of {_p}
+    open chest with 3 rows named "§8ᴡɪɴᴅ ʙᴜʀꜱᴛ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ" to {_p}
+    wait 1 tick
+    loop 27 times:
+        set slot (loop-number - 1) of {_p}'s current inventory to gray stained glass pane named " "
+    set slot 10 of {_p}'s current inventory to white stained glass pane named "&fNo Wind Burst"
+    set slot 12 of {_p}'s current inventory to lime stained glass pane named "§x§2§F§F§F§3§5Wind Burst 1"
+    set slot 13 of {_p}'s current inventory to yellow stained glass pane named "§x§F§F§E§0§2§FWind Burst 2"
+    set slot 14 of {_p}'s current inventory to red stained glass pane named "§x§F§F§0§0§3§EWind Burst 3"
+    set slot 16 of {_p}'s current inventory to white stained glass pane named "&fNo Wind Burst"
+
+function applyAndMark(p: player, level: integer):
+    if {WindBurst.Mace::%{_p}%} is not set:
+        stop
+    set {_item} to {WindBurst.Mace::%{_p}%}
+    remove wind burst from {_item}
+    if {_level} is 1:
+        enchant {_item} with wind burst 1
+    if {_level} is 2:
+        enchant {_item} with wind burst 2
+    if {_level} is 3:
+        enchant {_item} with wind burst 3
+    loop integers from 0 to 8:
+        if slot loop-value of {_p}'s inventory is {WindBurst.Mace::%{_p}%}:
+            set slot loop-value of {_p}'s inventory to {_item}
+    add {_item} to {WB.Done::%{_p}%::*}
+    delete {WindBurst.Mace::%{_p}%}
+    close {_p}'s inventory
+
+on inventory click:
+    if name of player's current inventory is "§8ᴡɪɴᴅ ʙᴜʀꜱᴛ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ":
+        cancel event
+        set {_s} to index of event-slot
+        if {_s} is 10:
+            applyAndMark(player, 0)
+        if {_s} is 16:
+            applyAndMark(player, 0)
+        if {_s} is 12:
+            applyAndMark(player, 1)
+        if {_s} is 13:
+            applyAndMark(player, 2)
+        if {_s} is 14:
+            applyAndMark(player, 3)
+
+on inventory close:
+    if name of event-inventory is "§8ᴡɪɴᴅ ʙᴜʀꜱᴛ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ":
+        if {WindBurst.Mace::%player%} is set:
+            delete {WindBurst.Mace::%player%}

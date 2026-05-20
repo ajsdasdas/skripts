@@ -1,0 +1,11 @@
+# Crystal Touch Script - Minecraft Skript
+# Auto give 10 crystals on hitting AawCloudyx
+
+options:
+	target-player: AawCloudyx
+
+# Event: When a player clicks/touches AawCloudyx
+on right click on player:
+	clicked entity's name is "{@target-player}"
+	
+	execute console command "c give %player% 2"

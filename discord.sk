@@ -1,0 +1,12 @@
+options:
+	prefix: 
+	SoundD: BLOCK_NOTE_BLOCK_PLING
+	SoundD-Volume: 1
+	SoundD-Pitch: 2
+
+command /discord:
+    aliases: /server, /community, /dc
+    trigger:
+        send "§x§f§f§0§0§0§0ᴊᴏɪɴ ᴛʜᴇ ᴍᴀᴄᴇꜰᴜʟ ᴄᴏᴍᴍᴜɴɪᴛʏ" to player
+        send "§x§f§f§0§0§0§0&l•&r &f&n<link:https://discord.gg/fGDs9wrZP5>CLICK HERE" to player
+        play sound "{@SoundD}" with volume {@SoundD-Volume} and pitch {@SoundD-Pitch}

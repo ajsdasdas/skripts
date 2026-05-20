@@ -1,0 +1,4 @@
+every 5 seconds:
+    loop all players:
+        if loop-player's boots doesn't have enchantment "SOUL_SPEED":
+            remove attribute modifier "soul_speed" from loop-player's attribute "generic.movement_speed"

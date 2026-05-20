@@ -1,0 +1,4 @@
+command /settings:
+    trigger:
+        execute player command "dm open settings_menu"
+

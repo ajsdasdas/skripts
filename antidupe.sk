@@ -1,0 +1,6 @@
+on inventory click:
+    wait 1 tick
+    loop all items in player's inventory:
+        if loop-item is not air:
+            if "%lore of loop-item%" contains "Click to select this item":
+                remove loop-item from player's inventory

@@ -1,0 +1,6 @@
+on join:
+    set join message to "" # מבטל את הודעת ההצטרפות הרגילה
+    
+    wait 5 ticks
+    send title "&x&F&F&0&0&0&0&lWELCOME!" with subtitle "&fᴘʟᴀʏ.ᴍᴀᴄᴇғᴜʟ.ɴᴇᴛ" to player for 5 seconds
+    play sound "minecraft:entity.experience_orb.pickup" with volume 3 and pitch 1 to player

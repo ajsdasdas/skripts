@@ -1,0 +1,16 @@
+options:
+    prefix:
+    SoundD: BLOCK_NOTE_BLOCK_PLING
+    SoundD-Volume: 1
+    SoundD-Pitch: 2
+
+command /vote:
+    aliases: /free
+    trigger:
+        send "§x§f§f§0§0§0§0ᴠᴏᴛᴇ ꜰᴏʀ ᴏᴜʀ ꜱᴇʀᴠᴇʀ" to player
+        send ""
+        send "§x§f§f§0§0§0§0&l•&r &f&n<link:https://minecraftservers.org/vote/679313/>CLICK HERE (MinecraftServers.org)" to player
+        send "§x§f§f§0§0§0§0&l•&r &f&n<link:https://minecraft-mp.com/server/349242/vote/>CLICK HERE (Minecraft-MP)" to player
+        send "§x§f§f§0§0§0§0&l•&r &f&n<link:https://minecraft.buzz/vote/18908/>CLICK HERE (MinecraftBuzz)" to player
+        send ""
+        play sound "{@SoundD}" with volume {@SoundD-Volume} and pitch {@SoundD-Pitch}

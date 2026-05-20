@@ -1,0 +1,194 @@
+options:
+    command: chatcolor
+    permission-command: chatcolor.menu
+    permission-command-message: &cʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀᴄᴄᴇss ᴛᴏ ᴛʜᴀᴛ ᴄᴏᴍᴍᴀɴᴅ
+
+on chat with priority highest:
+    if player has permission "chatcolor.use":
+        if {chat-color1::%player's uuid%} is not set:
+            set message to "&f%message%"
+        else if {chat-color1::%player's uuid%} is "default":
+            set message to "&f%message%"
+        else:
+            set message to mini message from "<gradient:#%{chat-color1::%player's uuid%}%:#%{chat-color2::%player's uuid%}%>%message%"
+    else:
+        set message to "&f%message%"
+
+function ChatColor(p: player):
+    set {_p}'s metadata tag "ChatColor" to chest inventory with 5 rows named "ᴄʜᴀᴛ ᴄᴏʟᴏʀ"
+    set slot 10 of {_p}'s metadata tag "ChatColor" to red concrete named mini message from "<gradient:#BD0000:#FF3333><bold>ʀᴇᴅ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 11 of {_p}'s metadata tag "ChatColor" to blue concrete named mini message from "<gradient:#0027D6:#4264FF><bold>ʙʟᴜᴇ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 12 of {_p}'s metadata tag "ChatColor" to light blue concrete named mini message from "<gradient:#00CCFF:#87E7FF><bold>ʟɪɢʜᴛ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 13 of {_p}'s metadata tag "ChatColor" to yellow concrete named mini message from "<gradient:#FFE41A:#FFEB73><bold>ʏᴇʟʟᴏᴡ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 14 of {_p}'s metadata tag "ChatColor" to orange concrete named mini message from "<gradient:#FF9F38:#FFBD75><bold>ᴏʀᴀɴɢᴇ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 15 of {_p}'s metadata tag "ChatColor" to pink concrete named mini message from "<gradient:#FF7DEC:#FFA6F2><bold>ᴘɪɴᴋ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 16 of {_p}'s metadata tag "ChatColor" to brown concrete named mini message from "<gradient:#825E31:#8F775A><bold>ʙʀᴏᴡɴ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 19 of {_p}'s metadata tag "ChatColor" to purple concrete named mini message from "<gradient:#A817FF:#D080FF><bold>ᴘᴜʀᴘʟᴇ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 20 of {_p}'s metadata tag "ChatColor" to green concrete named mini message from "<gradient:#0F9100:#70AB6C><bold>ɢʀᴇᴇɴ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 21 of {_p}'s metadata tag "ChatColor" to lime concrete named mini message from "<gradient:#7BFF73:#A6FFA1><bold>ʟɪᴍᴇ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 22 of {_p}'s metadata tag "ChatColor" to cyan concrete named mini message from "<gradient:#36AFCF:#77C8D9><bold>ᴄʏᴀɴ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 23 of {_p}'s metadata tag "ChatColor" to purpur block named mini message from "<gradient:#a170a0:#c3a5c3><bold>ᴇɴᴅ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 24 of {_p}'s metadata tag "ChatColor" to pumpkin named mini message from "<gradient:#e48b1e:#cfb645><bold>ʜᴀʟᴏᴡᴇᴇɴ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 25 of {_p}'s metadata tag "ChatColor" to sculk catalyst named mini message from "<gradient:#0e5b64:#2ae7f5><bold>ᴡᴀʀᴅᴇɴ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    set slot 40 of {_p}'s metadata tag "ChatColor" to paper named "&f&lᴅᴇғᴀᴜʟᴛ ᴄᴏʟᴏʀ" with lore "&7ᴄʟɪᴄᴋ ᴛᴏ sᴇᴛ"
+    open {_p}'s metadata tag "ChatColor" to {_p}
+
+command {@command}:
+    permission: {@permission-command}
+    permission message: {@permission-command-message}
+    trigger:
+        if player has permission "chatcolor.use":
+            ChatColor(player)
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴜsᴇ ᴄʜᴀᴛ ᴄᴏʟᴏʀs" to player
+            play sound "minecraft:entity.villager.no" to player
+
+on inventory click:
+    name of event-inventory is "ᴄʜᴀᴛ ᴄᴏʟᴏʀ"
+    cancel event
+
+    if index of event-slot = 10:
+        if player has permission "chatcolor.color.ʀᴇᴅ":
+            send actionbar "&aᴛʜᴇ ʀᴇᴅ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "BD0000"
+            set {chat-color2::%player's uuid%} to "FF3333"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ʀᴇᴅ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 11:
+        if player has permission "chatcolor.color.ʙʟᴜᴇ":
+            send actionbar "&aᴛʜᴇ ʙʟᴜᴇ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "0027D6"
+            set {chat-color2::%player's uuid%} to "4264FF"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ʙʟᴜᴇ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 12:
+        if player has permission "chatcolor.color.ʟɪɢʜᴛ":
+            send actionbar "&aᴛʜᴇ ʟɪɢʜᴛ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "00CCFF"
+            set {chat-color2::%player's uuid%} to "87E7FF"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ʟɪɢʜᴛ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 13:
+        if player has permission "chatcolor.color.ʏᴇʟʟᴏᴡ":
+            send actionbar "&aᴛʜᴇ ʏᴇʟʟᴏᴡ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "FFE41A"
+            set {chat-color2::%player's uuid%} to "FFEB73"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ʏᴇʟʟᴏᴡ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 14:
+        if player has permission "chatcolor.color.ᴏʀᴀɴɢᴇ":
+            send actionbar "&aᴛʜᴇ ᴏʀᴀɴɢᴇ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "FF9F38"
+            set {chat-color2::%player's uuid%} to "FFBD75"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ᴏʀᴀɴɢᴇ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 15:
+        if player has permission "chatcolor.color.ᴘɪɴᴋ":
+            send actionbar "&aᴛʜᴇ ᴘɪɴᴋ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "FF7DEC"
+            set {chat-color2::%player's uuid%} to "FFA6F2"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ᴘɪɴᴋ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 16:
+        if player has permission "chatcolor.color.ʙʀᴏᴡɴ":
+            send actionbar "&aᴛʜᴇ ʙʀᴏᴡɴ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "825E31"
+            set {chat-color2::%player's uuid%} to "8F775A"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ʙʀᴏᴡɴ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 19:
+        if player has permission "chatcolor.color.ᴘᴜʀᴘʟᴇ":
+            send actionbar "&aᴛʜᴇ ᴘᴜʀᴘʟᴇ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "A817FF"
+            set {chat-color2::%player's uuid%} to "D080FF"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ᴘᴜʀᴘʟᴇ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 20:
+        if player has permission "chatcolor.color.ɢʀᴇᴇɴ":
+            send actionbar "&aᴛʜᴇ ɢʀᴇᴇɴ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "0F9100"
+            set {chat-color2::%player's uuid%} to "70AB6C"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ɢʀᴇᴇɴ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 21:
+        if player has permission "chatcolor.color.ʟɪᴍᴇ":
+            send actionbar "&aᴛʜᴇ ʟɪᴍᴇ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "7BFF73"
+            set {chat-color2::%player's uuid%} to "A6FFA1"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ʟɪᴍᴇ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 22:
+        if player has permission "chatcolor.color.ᴄʏᴀɴ":
+            send actionbar "&aᴛʜᴇ ᴄʏᴀɴ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "36AFCF"
+            set {chat-color2::%player's uuid%} to "77C8D9"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ᴄʏᴀɴ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 23:
+        if player has permission "chatcolor.color.ᴇɴᴅ":
+            send actionbar "&aᴛʜᴇ ᴇɴᴅ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "a170a0"
+            set {chat-color2::%player's uuid%} to "c3a5c3"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ᴇɴᴅ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 24:
+        if player has permission "chatcolor.color.ʜᴀʟᴏᴡᴇᴇɴ":
+            send actionbar "&aᴛʜᴇ ʜᴀʟᴏᴡᴇᴇɴ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "e48b1e"
+            set {chat-color2::%player's uuid%} to "cfb645"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ʜᴀʟᴏᴡᴇᴇɴ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 25:
+        if player has permission "chatcolor.color.ᴡᴀʀᴅᴇɴ":
+            send actionbar "&aᴛʜᴇ ᴡᴀʀᴅᴇɴ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+            play sound "minecraft:block.amethyst_block.place" to player
+            set {chat-color1::%player's uuid%} to "0e5b64"
+            set {chat-color2::%player's uuid%} to "2ae7f5"
+        else:
+            send actionbar "&cʏᴏᴜ ᴅᴏᴇsɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ ᴛʜᴇ ᴡᴀʀᴅᴇɴ ᴄᴏʟᴏʀ" to player
+            play sound "minecraft:entity.villager.no" to player
+
+    if index of event-slot = 40:
+        send actionbar "&aᴛʜᴇ ᴅᴇғᴀᴜʟᴛ ᴄᴏʟᴏʀ ᴡᴀs sᴜᴄᴄᴇssғᴜʟʟʏ sᴇʟᴇᴄᴛᴇᴅ" to player
+        play sound "minecraft:block.amethyst_block.place" to player
+        delete {chat-color1::%player's uuid%}
+        delete {chat-color2::%player's uuid%}

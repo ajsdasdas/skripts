@@ -1,0 +1,98 @@
+# ============================================================
+#  Training Dummy Script - FlameFrags Edition
+#  Requirements: Skript 2.10+ | SkBee | Paper
+# ============================================================
+#  COMMANDS:
+#    /spawndummy   - Spawns the dummy at your feet
+#    /removedummy  - Removes all training dummies
+# ============================================================
+
+options:
+    # FlameFrags skin texture (base64 value from Mojang's texture server)
+    SKIN_VALUE: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHBzOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzllOTE3ZjM0OGUwNzdlOTI3OWFlNmY5ZmU3YjZhNzcyOTNkZTEyYWM2NTg3NGYxMWI1NjZlMzZlYmIyNjU4ZDQifX19
+
+# ── Helper Function: spawn one dummy ─────────────────────────
+function spawnDummy(loc: location):
+    # Spawn zombie: NoAI, silent off (so hit sounds play), persistent, adult
+    set {_nbt} to nbt compound from "{NoAI:1b,Silent:0b,PersistenceRequired:1b,IsBaby:0b}"
+    spawn zombie at {_loc} with nbt {_nbt}
+    set {_dummy} to last spawned entity
+
+    # Always-visible name above head
+    set display name of {_dummy} to "&c&lDummy"
+
+    # High HP so hits register without it dying
+    set max health of {_dummy} to 2048
+    set health of {_dummy} to 2048
+
+    # Give it the FlameFrags player head as helmet
+    # The skull NBT sets the skin texture via SkullOwner properties
+    set {_headNbt} to nbt compound from "{SkullOwner:{Id:[I;0,0,0,1],Properties:{textures:[{Value:""{@SKIN_VALUE}""}]}}}"
+    set {_head} to player head with nbt {_headNbt}
+    set helmet of {_dummy} to {_head}
+
+    # Track by UUID
+    set {dummies::%uuid of {_dummy}%} to {_dummy}
+
+# ── Spawn Command ─────────────────────────────────────────────
+command /spawndummy:
+    permission: dummy.spawn
+    permission message: "&cNo permission."
+    executable by: players
+    trigger:
+        spawnDummy(location of player)
+        send "&aTraining dummy spawned! Hit it to practice." to player
+
+# ── Remove Command ────────────────────────────────────────────
+command /removedummy:
+    permission: dummy.spawn
+    permission message: "&cNo permission."
+    executable by: players
+    trigger:
+        set {_count} to 0
+        loop {dummies::*}:
+            if loop-value is set:
+                kill loop-value
+                add 1 to {_count}
+        clear {dummies::*}
+        if {_count} is 1:
+            send "&eRemoved &6%{_count}% &etraining dummy." to player
+        else:
+            send "&eRemoved &6%{_count}% &etraining dummies." to player
+
+# ── Face Nearest Player (every second) ───────────────────────
+every 1 second:
+    loop {dummies::*}:
+        set {_dummy} to loop-value
+        if {_dummy} is set:
+            # Find nearest player within 20 blocks
+            set {_closest} to 999
+            delete {_nearest}
+            loop all players in radius 20 of location of {_dummy}:
+                set {_dist} to distance between loop-player and {_dummy}
+                if {_dist} < {_closest}:
+                    set {_closest} to {_dist}
+                    set {_nearest} to loop-player
+            if {_nearest} is set:
+                make {_dummy} look at {_nearest}
+
+# ── Heal on Damage ────────────────────────────────────────────
+on damage of living entity:
+    if {dummies::%uuid of victim%} is set:
+        set damage to 0
+        set health of victim to max health of victim
+
+# ── Cancel Knockback (SkBee Paper event) ──────────────────────
+on entity knockback:
+    if {dummies::%uuid of knockback victim%} is set:
+        cancel event
+
+# ── Safety Net: respawn if somehow killed ─────────────────────
+on death of living entity:
+    if {dummies::%uuid of victim%} is set:
+        cancel event
+        set {_loc} to location of victim
+        set {_oldUUID} to uuid of victim
+        wait 1 tick
+        delete {dummies::%{_oldUUID}%}
+        spawnDummy({_loc})

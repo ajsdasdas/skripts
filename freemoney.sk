@@ -1,0 +1,11 @@
+command /freemoney:
+    trigger:
+        if {new.used.%player%} is set:
+            send "&cYou have already claimed this reward." to player
+            stop
+
+        set {new.used.%player%} to true
+
+        execute console command "eco give %player% 1000000"
+
+        send "&aReward claimed successfully. You received 1,000,000 coins." to player

@@ -1,0 +1,3 @@
+command /ranks:
+    trigger:
+        execute player command "dm open donate_menu"

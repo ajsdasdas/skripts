@@ -1,0 +1,85 @@
+# Blocks players from sending the same or similar chat message more than twice in a row.
+# Put this file in: plugins/Skript/scripts/
+# Then run: /sk reload anti_similar_messages
+options:
+    cancel_message: §x§F§F§4§3§1§F§l[!] &fPlease do not repeat the same or similar messages.
+    repeat_limit: 2
+    reset_after: 20 seconds
+    minimum_similar_length: 6
+    word_similarity_percent: 75
+function normalizedChatMessage(t: text) :: text:
+    set {_text} to lowercase {_t}
+    replace all " " with "" in {_text}
+    replace all "." with "" in {_text}
+    replace all "," with "" in {_text}
+    replace all "!" with "" in {_text}
+    replace all "?" with "" in {_text}
+    replace all "'" with "" in {_text}
+    replace all """" with "" in {_text}
+    replace all "-" with "" in {_text}
+    replace all "_" with "" in {_text}
+    replace all ":" with "" in {_text}
+    replace all ";" with "" in {_text}
+    return {_text}
+function cleanedChatWords(t: text) :: texts:
+    set {_text} to lowercase {_t}
+    replace all "." with "" in {_text}
+    replace all "," with "" in {_text}
+    replace all "!" with "" in {_text}
+    replace all "?" with "" in {_text}
+    replace all "'" with "" in {_text}
+    replace all """" with "" in {_text}
+    replace all "-" with " " in {_text}
+    replace all "_" with " " in {_text}
+    replace all ":" with "" in {_text}
+    replace all ";" with "" in {_text}
+    set {_split::*} to {_text} split at " "
+    loop {_split::*}:
+        if length of loop-value is greater than 2:
+            add loop-value to {_words::*}
+    return {_words::*}
+function chatMessagesAreSimilar(a: text, b: text) :: boolean:
+    if {_b} is not set:
+        return false
+    set {_normalA} to normalizedChatMessage({_a})
+    set {_normalB} to normalizedChatMessage({_b})
+    if {_normalA} is {_normalB}:
+        return true
+    if length of {_normalA} is less than {@minimum_similar_length}:
+        return false
+    if length of {_normalB} is less than {@minimum_similar_length}:
+        return false
+    if {_normalA} contains {_normalB}:
+        return true
+    if {_normalB} contains {_normalA}:
+        return true
+    set {_wordsA::*} to cleanedChatWords({_a})
+    set {_wordsB::*} to cleanedChatWords({_b})
+    if size of {_wordsA::*} is 0:
+        return false
+    loop {_wordsA::*}:
+        if {_wordsB::*} contains loop-value:
+            add 1 to {_matchingWords}
+    if {_matchingWords} is not set:
+        return false
+    set {_similarityPercent} to {_matchingWords} / size of {_wordsA::*} * 100
+    if {_similarityPercent} is greater than or equal to {@word_similarity_percent}:
+        return true
+    return false
+on chat with priority highest:
+    set {_playerId} to uuid of player
+    if {antiSimilarMessages.lastTime.%{_playerId}%} is set:
+        if difference between now and {antiSimilarMessages.lastTime.%{_playerId}%} is greater than {@reset_after}:
+            delete {antiSimilarMessages.last.%{_playerId}%}
+            delete {antiSimilarMessages.streak.%{_playerId}%}
+            delete {antiSimilarMessages.lastTime.%{_playerId}%}
+    if chatMessagesAreSimilar(message, {antiSimilarMessages.last.%{_playerId}%}) is true:
+        add 1 to {antiSimilarMessages.streak.%{_playerId}%}
+    else:
+        set {antiSimilarMessages.streak.%{_playerId}%} to 1
+    if {antiSimilarMessages.streak.%{_playerId}%} is greater than {@repeat_limit}:
+        cancel event
+        send "{@cancel_message}" to player
+        stop
+    set {antiSimilarMessages.last.%{_playerId}%} to message
+    set {antiSimilarMessages.lastTime.%{_playerId}%} to now

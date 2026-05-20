@@ -1,0 +1,12 @@
+every 8 minutes:
+    loop all entities in all worlds:
+        if loop-entity is an arrow:
+            if loop-entity is on ground:
+                delete loop-entity
+
+command /removearrows:
+    trigger:
+        loop all entities in all worlds:
+            if loop-entity is an arrow:
+                if loop-entity is on ground:
+                    delete loop-entity

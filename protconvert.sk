@@ -1,0 +1,87 @@
+options:
+    protconvert-gui-name: &8ᴘʀᴏᴛᴇᴄᴛɪᴏɴ ᴄᴏɴᴠᴇʀᴛᴇʀ§0
+
+command /protconvert:
+    trigger:
+        set {_gui} to chest inventory with 3 rows named "{@protconvert-gui-name}"
+
+        set {_panel} to gray stained glass pane named "&7"
+        loop 27 times:
+            set slot loop-number - 1 of {_gui} to {_panel}
+
+        set {_converter} to globe banner pattern named "§x§E§2§0§0§0§0§lC§x§E§6§0§0§0§0§lO§x§E§9§0§0§0§0§lN§x§E§D§0§0§0§0§lV§x§F§1§0§0§0§0§lE§x§F§4§0§0§0§0§lR§x§F§8§0§0§0§0§lT§x§F§B§0§0§0§0§lE§x§F§F§0§0§0§0§lR"
+        set lore of {_converter} to "&7 " and "&8Drag a Blast Protection/Protection here!" and "&8Converts Blast Protection to Protection, " and "&8same with Protection to Blast Protection"
+        set slot 13 of {_gui} to {_converter}
+
+        set {protconvert::open::%uuid of player%} to true
+        open {_gui} to player
+
+
+on inventory click:
+    if {protconvert::open::%uuid of player%} is true:
+        set {_raw} to raw index of event-slot
+
+        if click type is left mouse button with shift:
+            cancel event
+            stop
+        if click type is right mouse button with shift:
+            cancel event
+            stop
+        if click type is number key:
+            cancel event
+            stop
+        if click type is swap offhand:
+            cancel event
+            stop
+        if click type is double click:
+            cancel event
+            stop
+
+        if {_raw} < 27:
+            cancel event
+
+            if {_raw} is 13:
+                if player's cursor slot is air:
+                    stop
+
+                set {_item} to player's cursor slot
+                set {_type} to "%type of {_item}%"
+
+                if {_type} does not contain "helmet":
+                    if {_type} does not contain "chestplate":
+                        if {_type} does not contain "leggings":
+                            if {_type} does not contain "boots":
+                                send "&cYou can only convert armor pieces!" to player
+                                stop
+
+                if enchantment level of blast protection of {_item} is 4:
+                    set enchantment level of blast protection of {_item} to 0
+                    set enchantment level of protection of {_item} to 4
+                    set player's cursor slot to {_item}
+                    play sound "block.note_block.pling" to player
+                    send "&aConverted Blast Protection IV to Protection IV!" to player
+                    stop
+
+                if enchantment level of protection of {_item} is 4:
+                    set enchantment level of protection of {_item} to 0
+                    set enchantment level of blast protection of {_item} to 4
+                    set player's cursor slot to {_item}
+                    play sound "block.note_block.pling" to player
+                    send "&aConverted Protection IV to Blast Protection IV!" to player
+                    stop
+
+                send "&cThis armor must have Protection IV or Blast Protection IV!" to player
+
+
+on inventory drag:
+    if {protconvert::open::%uuid of player%} is true:
+        cancel event
+
+
+on inventory close:
+    if {protconvert::open::%uuid of player%} is true:
+        delete {protconvert::open::%uuid of player%}
+
+
+on quit:
+    delete {protconvert::open::%uuid of player%}

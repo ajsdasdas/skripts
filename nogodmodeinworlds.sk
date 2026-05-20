@@ -1,0 +1,18 @@
+on join:
+    wait 1 tick
+    set {_world} to "%world of player%"
+    if {_world} is "world":
+        stop
+    if {_world} is "world_nether":
+        stop
+    if {_world} is "world_the_end":
+        stop
+    if {_world} is "arenaffa":
+        teleport player to spawn of world("MedievalSpawn")
+        stop
+    if {_world} is "MedievalSpawn":
+        teleport player to spawn of world("MedievalSpawn")
+        stop
+    if {_world} is "KOTH":
+        teleport player to spawn of world("MedievalSpawn")
+        stop

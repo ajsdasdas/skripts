@@ -1,0 +1,43 @@
+# ─────────────────────────────────────────────
+#  Repeat Command Block
+#  Prevents using the same command more than
+#  3 times in a row. Resets after 10 seconds.
+# ─────────────────────────────────────────────
+
+on command:
+    if player has permission "cooldown.bypass":
+        stop
+
+    set {_cmd} to command
+
+    # If 10 seconds passed since last use, reset streak
+    if {cmdtime::%uuid of player%} is set:
+        set {_elapsed} to difference between now and {cmdtime::%uuid of player%}
+
+        if {_elapsed} >= 6 seconds:
+            delete {lastcmd::%uuid of player%}
+            delete {cmdcount::%uuid of player%}
+            delete {cmdtime::%uuid of player%}
+
+    # Check if same command
+    if {lastcmd::%uuid of player%} is {_cmd}:
+        add 1 to {cmdcount::%uuid of player%}
+
+        # Block after 3 uses
+        if {cmdcount::%uuid of player%} > 4:
+            cancel event
+            send "§x§F§F§4§3§1§F§l[!] §fPlease do not repeat the same commands." to player
+            stop
+    else:
+        # Different command = reset counter
+        set {lastcmd::%uuid of player%} to {_cmd}
+        set {cmdcount::%uuid of player%} to 1
+
+    # Update timer
+    set {cmdtime::%uuid of player%} to now
+
+
+on quit:
+    delete {lastcmd::%uuid of player%}
+    delete {cmdcount::%uuid of player%}
+    delete {cmdtime::%uuid of player%}

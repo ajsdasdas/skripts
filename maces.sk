@@ -1,0 +1,20 @@
+on inventory click:
+    set {_item} to event-item
+    if {_item} is not air:
+        if type of {_item} is mace:
+            set {_d} to enchantment level of density of {_item}
+            set {_b} to enchantment level of breach of {_item}
+            if {_d} >= 5:
+                if {_b} >= 4:
+                    remove {_item} from player's inventory
+                    cancel event
+                    send "&cThis mace combination is not allowed." to player
+
+on pickup:
+    if type of event-item is mace:
+        set {_d} to enchantment level of density of event-item
+        set {_b} to enchantment level of breach of event-item
+        if {_d} >= 5:
+            if {_b} >= 4:
+                cancel event
+                kill event-entity

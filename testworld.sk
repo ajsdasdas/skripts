@@ -1,0 +1,4 @@
+every 5 seconds:
+    loop all entities in world "test":
+        if type of loop-entity is item:
+            delete loop-entity

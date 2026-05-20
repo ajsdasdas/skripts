@@ -1,0 +1,8 @@
+command /ptuff:
+    trigger:
+        set {_b} to target block of player
+        if {_b} is air:
+            send "&cNo valid block in sight."
+            stop
+
+        execute player command "/sphere tuff,polished_tuff 5 %{_b}%"

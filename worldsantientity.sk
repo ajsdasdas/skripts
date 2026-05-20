@@ -1,0 +1,5 @@
+every 7 minutes:
+    execute console command "killall all KOTH"
+    execute console command "killall all noelyarena"
+    execute console command "killall all arenaffa"
+    execute console command "killall all swordarena" 

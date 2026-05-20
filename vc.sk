@@ -1,0 +1,12 @@
+options:
+    prefix: 
+    SoundD: BLOCK_NOTE_BLOCK_PLING
+    SoundD-Volume: 1
+    SoundD-Pitch: 2
+
+command /vc:
+    aliases: /vcccc, /vcc, /vccc
+    trigger:
+        send "§x§f§f§0§0§0§0ᴠᴏɪᴄᴇ ᴄʜᴀᴛ ᴡᴏʀᴋꜱ ᴡɪᴛʜ ᴀʟʟ ᴛʜᴇ ᴠᴇʀꜱɪᴏɴꜱ" to player
+        send "§x§f§f§0§0§0§0&l•&r &f&n<link:https://modrinth.com/plugin/simple-voice-chat>CLICK TO DOWNLOAD VOICECHAT" to player
+        play sound "{@SoundD}" with volume {@SoundD-Volume} and pitch {@SoundD-Pitch}

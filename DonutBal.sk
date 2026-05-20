@@ -1,0 +1,149 @@
+options: 
+
+#----------------
+#    SOUNDS
+#----------------
+	error-sound: ENTITY.VILLAGER.NO
+	error-volume: 0.5
+#----------------
+#    BALANCE
+#----------------
+	own-balance: "&7ʏᴏᴜ ʜᴀᴠᴇ <#00fc00>$%{_formatted}%&7."
+	players-balance: "<#00a4fc>%{_target}% &7ʜᴀꜱ <#00fc00>$%{_formatted}%&7."
+#----------------
+#      PAY
+#----------------
+	pay-sender: "&7ʏᴏᴜ ᴘᴀɪᴅ <#00a4fc>%{_target}%&a <#00fc00>$%formatpay({_amount})%"
+	pay-receiver: "<#00a4fc>%player% &7ᴘᴀɪᴅ ʏᴏᴜ <#00fc00>$%formatpay({_amount})%"
+	error: &cᴛʜᴀᴛ ɴᴜᴍʙᴇʀ ɪꜱ ɪɴᴠᴀʟɪᴅ.
+	insufficient-balance: &cʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ᴍᴏɴᴇʏ.
+	
+
+
+function formatbalance(n: number) :: text:
+    set {_data} to "QT,18|Q,15|T,12|B,9|M,6|K,3"
+    loop split {_data} at "|":
+        set {_s::*} to split loop-value at ","
+        {_n} >= 10 ^ {_s::2} parsed as number
+        return "%{_n} / 10 ^ {_s::2} parsed as number%%{_s::1}%"
+    return "%{_n}%"
+
+command /bal [<offline player>] [<text>]:
+    aliases: /balance, /money
+    trigger:
+        if arg-1 is not set:
+            set {_bal} to player's balance
+            set {_formatted} to formatbalance({_bal})
+            send {@own-balance} to player
+            send action bar {@own-balance} to player
+            stop
+			
+        if arg-2 is set:
+            stop
+
+        set {_target} to arg-1
+			
+        if {_target} is not online:
+            if {_target} has not played before:
+                send "&cᴛʜᴀᴛ ᴘʟᴀʏᴇʀ ɪꜱ ᴏꜰꜰʟɪɴᴇ." to player
+                send action bar "&cᴛʜᴀᴛ ᴘʟᴀʏᴇʀ ɪꜱ ᴏꜰꜰʟɪɴᴇ." to player
+                play sound "{@error-sound}" at volume {@error-volume} to player
+                stop
+
+        set {_bal} to balance of {_target}
+        set {_formatted} to formatbalance({_bal})
+        send {@players-balance} to player
+        send action bar {@players-balance} to player
+					
+function parsebalance(s: text) :: number:
+    set {_s} to lowercase {_s}
+    set {_data} to "qt,18|q,15|t,12|b,9|m,6|k,3"
+    loop split {_data} at "|":
+        set {_unit::*} to split loop-value at ","
+        if {_s} ends with "%{_unit::1}%":
+            replace all "%{_unit::1}%" in {_s} with ""
+            set {_num} to {_s} parsed as number
+            if {_num} is not a number:
+                return -1
+
+            if {_num} >= 1000:
+                return -2
+
+            return {_num} * (10 ^ ({_unit::2} parsed as number))
+    return {_s} parsed as number
+
+function formatpay(n: number) :: text:
+    set {_data} to "QT,18|Q,15|T,12|B,9|M,6|K,3"
+    loop split {_data} at "|":
+        set {_s::*} to split loop-value at ","
+        {_n} >= 10 ^ {_s::2} parsed as number
+        return "%{_n} / 10 ^ {_s::2} parsed as number%%{_s::1}%"
+    return "%{_n}%"
+
+
+command /pay [<offline player>] [<text>] [<text>]:
+    trigger:
+        if arg-1 or arg-2 is not set:
+            stop
+			
+        if arg-3 is set:
+            stop	
+
+        set {_target} to arg-1
+        set {_input} to arg-2
+
+        if {_input} contains "kk" or "mm" or "bb" or "tt":
+            send "{@error}" to player
+            send action bar "{@error}" to player
+            play sound "{@error-sound}" at volume {@error-volume} to player
+            stop
+			
+        if {_target} is player:
+            send "{@error}" to player
+            send action bar "{@error}" to player
+            play sound "{@error-sound}" at volume {@error-volume} to player
+            stop
+
+        set {_amount} to parsebalance({_input})
+
+        if {_amount} is not a number:
+            send "{@error}" to player
+            send action bar "{@error}" to player
+            play sound "{@error-sound}" at volume {@error-volume} to player
+            stop
+			
+        if {_amount} = -2:
+            send "{@error}" to player
+            send action bar "{@error}" to player
+            play sound "{@error-sound}" at volume {@error-volume} to player
+            stop
+
+        if {_amount} <= 0:
+            send "{@error}" to player
+            send action bar "{@error}" to player
+            play sound "{@error-sound}" at volume {@error-volume} to player
+            stop	
+
+        if {_target} is not online:
+            if {_target} has not played before:
+                send "&cThat player does not exist" to player
+                send action bar "&cThat player does not exist." to player
+                play sound "{@error-sound}" at volume {@error-volume} to player
+                stop
+				
+        set {_balance} to balance of player
+        if {_balance} < {_amount}:
+            send "{@insufficient-balance}" to player
+            send action bar "{@insufficient-balance}" to player
+            play sound "{@error-sound}" at volume {@error-volume} to player
+            stop
+
+        remove {_amount} from player's balance
+        add {_amount} to balance of {_target}
+
+        send {@pay-sender} to player
+        send action bar {@pay-sender} to player
+
+        if {_target} is online:
+            send {@pay-receiver} to {_target}
+            send action bar {@pay-receiver} to {_target}			

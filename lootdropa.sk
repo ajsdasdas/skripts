@@ -1,0 +1,3 @@
+command /announce-lootdrop:
+    trigger:
+        send title "§x§F§F§6§8§9§2§l/§x§F§F§6§8§9§2§lw§x§F§F§6§8§9§2§la§x§F§F§6§3§8§A§lr§x§F§F§5§F§8§2§lp §x§F§F§5§6§7§2§ll§x§F§F§5§1§6§A§lo§x§F§F§4§D§6§2§lo§x§F§F§4§8§5§9§lt§x§F§F§4§3§5§1§ld§x§F§F§3§F§4§9§lr§x§F§F§3§A§4§1§lo§x§F§F§3§6§3§9§lp§x§F§F§3§1§3§1§ls" with subtitle "" to all players for 10 seconds

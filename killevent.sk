@@ -1,0 +1,72 @@
+# ==========================================
+#           KILL EVENT SKRIPT
+# ==========================================
+
+options:
+    prefix: §x§F§F§6§8§9§2§lK§x§F§F§5§A§7§A§lI§x§F§F§4§D§6§2§lL§x§F§F§3§F§4§9§lL§x§F§F§3§1§3§1§l! &7|
+    duration: 5 minutes
+
+# ==========================================
+#           START COMMAND
+# ==========================================
+
+command /kill-event-start:
+    permission: op
+    permission message: {@prefix} &fYou don't have permission to use this command.
+    trigger:
+        if {kill-event.active} is true:
+            send "{@prefix} &fThe Kill Event is already running!" to player
+            stop
+        set {kill-event.active} to true
+        delete {kill-event.last-victim::*}
+        broadcast "{@prefix} &fThe Kill Event has started! You have 5 minutes to get as many kills as possible!"
+        wait {@duration}
+        if {kill-event.active} is true:
+            set {kill-event.active} to false
+            delete {kill-event.last-victim::*}
+            broadcast "{@prefix} &fThe Kill Event has ended!"
+
+# ==========================================
+#           STOP COMMAND
+# ==========================================
+
+command /kill-event-stop:
+    permission: op
+    permission message: {@prefix} &fYou don't have permission to use this command.
+    trigger:
+        if {kill-event.active} is false:
+            send "{@prefix} &fThe Kill Event is not running!" to player
+            stop
+        set {kill-event.active} to false
+        delete {kill-event.last-victim::*}
+        broadcast "{@prefix} &fThe Kill Event has been stopped!"
+
+# ==========================================
+#           ON KILL LOGIC
+# ==========================================
+
+on death:
+    if {kill-event.active} is not true:
+        stop
+
+    set {_victim} to victim
+    set {_killer} to attacker
+
+    if {_killer} is not a player:
+        stop
+    if {_victim} is not a player:
+        stop
+
+    if {_killer} is {_victim}:
+        stop
+
+    set {_killerUUID} to uuid of {_killer}
+    set {_victimName} to name of {_victim}
+
+    if {kill-event.last-victim::%{_killerUUID}%} is {_victimName}:
+        send "{@prefix} &fKill farming detected! No crystals awarded for killing the same player twice in a row." to {_killer}
+        stop
+
+    set {kill-event.last-victim::%{_killerUUID}%} to {_victimName}
+    execute console command "c give %name of {_killer}% 100"
+    send "{@prefix} &fYou killed %{_victimName}%!" to {_killer}

@@ -1,0 +1,23 @@
+options:
+    prefix: §x§E§6§2§6§3§4§lCORE &8|&f
+
+# Store last logout location
+on quit:
+    set {lastlocation::%player's uuid%} to player's location
+
+# Reset teleport permission on join
+on join:
+    set {worldtp::%player's uuid%} to true
+
+# /world command
+command /world:
+    trigger:
+        if {worldtp::%player's uuid%} is true:
+            if {lastlocation::%player's uuid%} is set:
+                teleport player to {lastlocation::%player's uuid%}
+                send "{@prefix} Teleported to your last logout location!" to player
+                set {worldtp::%player's uuid%} to false
+            else:
+                send "{@prefix} No previous logout location found!" to player
+        else:
+            send "{@prefix} You have already teleported to your last location this session!" to player

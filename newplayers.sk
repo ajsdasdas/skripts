@@ -1,0 +1,117 @@
+# ============================================================
+#   New Players Tracker
+#   Command: /players new
+#   Tracks first-join info: join time & daily count
+# ============================================================
+
+# --------------- VARIABLES / STORAGE ----------------------
+# {newplayer.join::%uuid%}        -> join timestamp (date string)
+# {newplayer.daily::<date>}      -> count of new players that day
+# {newplayer.list::<date>::*}    -> list of player names that day
+
+# ==================== FIRST JOIN EVENT ====================
+on join:
+    if {newplayer.join::%uuid of player%} is not set:
+
+        # Store join timestamp
+        set {_now} to now
+        set {newplayer.join::%uuid of player%} to "%{_now}%"
+
+        # Store name -> uuid mapping for lookups
+        set {newplayer.uuid::%name of player%} to "%uuid of player%"
+
+        # Build date key (YYYY-MM-DD = first 10 chars of date string)
+        set {_dateKey} to first 10 characters of "%{_now}%"
+
+        # Increment daily counter
+        if {newplayer.daily::%{_dateKey}%} is not set:
+            set {newplayer.daily::%{_dateKey}%} to 0
+        add 1 to {newplayer.daily::%{_dateKey}%}
+
+        # Append to daily name list
+        add name of player to {newplayer.list::%{_dateKey}%::*}
+
+        # Broadcast to everyone
+
+# ==================== COMMAND /players new ================
+command /players new [<text>] [<text>]:
+    permission: players.new
+    permission message: &fYou do not have permission to use this command.
+    description: View new player join information
+    trigger:
+
+        # --- No args: today's summary ---
+        if arg 1 is not set:
+            set {_now} to now
+            set {_dateKey} to first 10 characters of "%{_now}%"
+
+            set {_count} to {newplayer.daily::%{_dateKey}%}
+            if {_count} is not set:
+                set {_count} to 0
+
+            send "&f&m------------------------------------" to player
+            send "&f  New Players Today &7(&f%{_dateKey}%&7)" to player
+            send "&f&m------------------------------------" to player
+            send "&f  Total new players: &f%{_count}%" to player
+            send "" to player
+            if {_count} > 0:
+                send "&f  Players:" to player
+                loop {newplayer.list::%{_dateKey}%::*}:
+                    send "&f    &7» &f%loop-value%" to player
+            else:
+                send "&f  &7No new players today." to player
+            send "&f&m------------------------------------" to player
+            send "&f  Tip: &7/players new <name> &ffor details" to player
+            send "&f&m------------------------------------" to player
+
+        # --- Arg 1 set ---
+        else:
+            # Past date summary: /players new <YYYY-MM-DD> total
+            if arg 2 is "total":
+                set {_dateKey} to arg 1
+
+                set {_count} to {newplayer.daily::%{_dateKey}%}
+                if {_count} is not set:
+                    set {_count} to 0
+
+                send "&f&m------------------------------------" to player
+                send "&f  New Players &7— &f%{_dateKey}%" to player
+                send "&f&m------------------------------------" to player
+                send "&f  Total new players: &f%{_count}%" to player
+                send "" to player
+                if {_count} > 0:
+                    send "&f  Players:" to player
+                    loop {newplayer.list::%{_dateKey}%::*}:
+                        send "&f    &7» &f%loop-value%" to player
+                else:
+                    send "&f  &7No new players on this date." to player
+                send "&f&m------------------------------------" to player
+
+            # Player lookup: /players new <name>
+            else:
+                if arg 2 is not set:
+                    set {_name} to arg 1
+                    set {_uuid} to {newplayer.uuid::%{_name}%}
+
+                    if {_uuid} is not set:
+                        send "&f&m------------------------------------" to player
+                        send "&f  &7No first-join data found for &f%{_name}%&7." to player
+                        send "&f&m------------------------------------" to player
+                        stop
+
+                    set {_joinDate} to {newplayer.join::%{_uuid}%}
+
+                    send "&f&m------------------------------------" to player
+                    send "&f  First Join Info &7» &f%{_name}%" to player
+                    send "&f&m------------------------------------" to player
+                    send "&f  Joined: &7%{_joinDate}%" to player
+                    send "&f&m------------------------------------" to player
+
+                # Unknown usage
+                else:
+                    send "&f&m------------------------------------" to player
+                    send "&f  Usage:" to player
+                    send "&f    &7/players new &f- Today's summary" to player
+                    send "&f    &7/players new <name> &f- Player details" to player
+                    send "&f    &7/players new <YYYY-MM-DD> total &f- Past date" to player
+                    send "&f&m------------------------------------" to player

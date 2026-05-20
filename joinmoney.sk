@@ -1,0 +1,3 @@
+on first join:
+    add 100000 to player's balance 
+    execute console command "kit give &7&lSTARTER %player%"

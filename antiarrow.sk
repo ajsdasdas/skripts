@@ -1,0 +1,4 @@
+every 15 seconds:
+    loop all entities of type arrow in all worlds:
+        if {_e} is on ground:
+            delete {_e}
